@@ -1,0 +1,20 @@
+{
+    "vim": [
+        {
+            "Shortcut": "Shift+V",
+            "Description": "Visual Line Mode.",
+            "Tag": [
+                "Mode",
+                "Visual"
+            ]
+        },
+        {
+            "Shortcut": "y",
+            "Description": "Copy selection.",
+            "Tag": [
+                "Copy",
+                "Selection"
+            ]
+        }
+    ]
+}
