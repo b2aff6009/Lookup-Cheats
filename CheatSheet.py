@@ -9,20 +9,23 @@ Debug = 1
 class CheatSheetTool:
     def __init__(self, key, path):
         with open(path, 'rb') as f:
-            entrys = json.load(f)[key]
-        self.entrys = {}
-        self.mapping = {}
+            CheatSheet = json.load(f)
+        entrys = CheatSheet[key]
+        self.order = CheatSheet["entry"]
+        self.entrys = entrys
         for entry in entrys:
-            cheatEntry = CheatSheetEntry(entry)
-            self.entrys[cheatEntry.shourtcut] = cheatEntry
-            self.mapping[cheatEntry.map] = cheatEntry.shourtcut
+            tosearch = " ".join(entry["Tag"])
+            entry["tosearch"] = " ".join((tosearch, entry["Description"]))
+
+    def orderResults(self, unorderd):
+        results = []
+        for entry in unorderd:
+            results.append([entry[step] for step in self.order]) 
+        return results
 
     def find(self, text):
-        strings = fuzzyfinder.fuzzyfinder(text, self.mapping.keys())
-        result = {}
-        for string in list(strings):
-            result[self.mapping[string]] = self.entrys[self.mapping[string]]
-        return result.keys()
+        results = fuzzyfinder.fuzzyfinder(text, self.entrys, accessor=lambda x: x["tosearch"])
+        return self.orderResults(list(results))
 
 class CheatSheetEntry:
     def __init__(self, entry):
@@ -41,12 +44,11 @@ class GuiEntry:
         self.frame.destroy()
 
     def AddLine(self, root, x, mRow = 0, mCol=0):
-        cols = [self.entry, "key", "desc"]
-        colWidth  = int(x/len(cols))
+        colWidth  = int(x/len(self.entry))
 
         self.frame = Frame(root, width=x, bg="yellow")
         self.cells = []
-        for colNr, colEntry in enumerate(cols):
+        for colNr, colEntry in enumerate(self.entry):
             self.frame.grid_columnconfigure(colNr, minsize=colWidth)
             self.cells.append(Label(self.frame, text=colEntry, bg="lightblue", anchor=W))
             self.cells[-1].grid(column=colNr, row=0)
@@ -96,9 +98,9 @@ class Gui:
         return self.searchBar
 
     def update(self, event):
-        hits =  toolSheet.find(self.searchBar.get())
         del self.entrys[:]
 
+        hits =  toolSheet.find(self.searchBar.get()) 
         for i, hit in enumerate(hits,0):
             newEntry = GuiEntry(hit)
             newEntry.AddLine(self.mainFrame, self.windowWidth, i, 0)

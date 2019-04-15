@@ -1,4 +1,8 @@
 {
+    "entry" : [
+        "Shortcut",
+        "Description"
+    ],
     "vim": [
         {
             "Shortcut": "Shift+V",
