@@ -7,15 +7,32 @@ SettingsPath = "CheatSheets.json"
 Debug = 1 
 
 class CheatSheetTool:
+
+    def getType(self, data):
+        return str(type(data)).split("'")[1]
+
     def __init__(self, key, path):
+        self.converter = {
+            'dict' : lambda cell : "Dict is not yet supported",
+            'list' : lambda cell : "".join([self.converter[self.getType(entry)](entry) for entry in cell]),
+            'str' : lambda x : x,
+            'int' : lambda x : str(x),
+            'unicode' : lambda x : str(x)
+        }
         with open(path, 'rb') as f:
             CheatSheet = json.load(f)
         entrys = CheatSheet[key]
         self.order = CheatSheet["entry"]
         self.entrys = entrys
         for entry in entrys:
-            tosearch = " ".join(entry["Tag"])
-            entry["tosearch"] = " ".join((tosearch, entry["Description"]))
+            entry["tosearch"] = self.createSearchEntry(entry.values())
+
+
+    def createSearchEntry(self, entry):
+        tosearch = ""
+        for cell in entry:
+            tosearch = "".join(self.converter[self.getType(cell)](cell))
+        return tosearch
 
     def orderResults(self, unorderd):
         results = []
