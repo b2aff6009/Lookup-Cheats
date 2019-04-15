@@ -27,13 +27,6 @@ class CheatSheetTool:
         results = fuzzyfinder.fuzzyfinder(text, self.entrys, accessor=lambda x: x["tosearch"])
         return self.orderResults(list(results))
 
-class CheatSheetEntry:
-    def __init__(self, entry):
-        self.shourtcut = entry["Shortcut"]
-        self.tags = entry["Tag"]
-        self.desc = entry["Description"]
-        self.map = entry["Tag"][0]
-
 class GuiEntry:
     def __init__(self, entry):
         self.entry = entry
