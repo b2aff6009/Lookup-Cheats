@@ -2,9 +2,10 @@ from tkinter import *
 import json
 import codecs
 import fuzzyfinder
+import keyboard
  
 SettingsPath = "CheatSheets.json"
-Debug = 1 
+Debug = 1
 
 class CheatSheetTool:
 
@@ -19,6 +20,7 @@ class CheatSheetTool:
             'int' : lambda x : str(x),
             'unicode' : lambda x : str(x)
         }
+
         with open(path, 'rb') as f:
             CheatSheet = json.load(f)
         entrys = CheatSheet[key]
@@ -73,6 +75,19 @@ class Gui:
         self.mainFrame = Frame(self.root, width=self.windowWidth, height=int(9*self.windowHeight/10) , bg="white")
         self.mainFrame.grid(row=1)
         self.root.grid()
+        keyboard.add_hotkey('alt+d', self.toggle)
+        self.vis = True
+
+    def toggle(self):
+        self.root.update()
+        if self.vis == True:
+            self.root.withdraw()
+            self.vis = False
+        else:
+            self.root.deiconify()
+            self.root.focus_force()
+            self.searchBar.focus()
+            self.vis = True
         
     def createMainWindow(self):
         self.root = Tk()
@@ -102,7 +117,7 @@ class Gui:
         self.searchFrame.grid(row=mRow, column=mCol)
         self.searchFrame.grid_columnconfigure(0, minsize=int(x))
         self.searchBar = Entry(self.searchFrame, bg="grey", justify=CENTER)
-        self.searchBar.bind("<Key>", self.update)
+        self.searchBar.bind("<KeyRelease>", self.update)
         self.searchBar.focus_set()
         self.searchBar.grid()
         return self.searchBar
@@ -110,7 +125,7 @@ class Gui:
     def update(self, event):
         del self.entrys[:]
 
-        hits =  toolSheet.find(self.searchBar.get()) 
+        hits = toolSheet.find(self.searchBar.get()) 
         for i, hit in enumerate(hits,0):
             newEntry = GuiEntry(hit)
             newEntry.AddLine(self.mainFrame, self.windowWidth, i, 0)
