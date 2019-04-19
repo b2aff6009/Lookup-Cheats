@@ -1,8 +1,10 @@
 {
     "settings" : {
         "shortcut" : "alt+d",
-        "cleanSearchbar" : "esc",
-        "Debug" : true
+        "cleanKey" : "esc",
+        "Debug" : true,
+        "opacity" : 0.5,
+        "position" : [0.1, 0.2]
     },
     "sheets" : {
         "vim" : "csVim.json"

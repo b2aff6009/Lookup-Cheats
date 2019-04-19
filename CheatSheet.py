@@ -79,7 +79,8 @@ class Gui:
         self.root.grid()
         if ("shortcut" in settings.keys()):
             if platform.system() == "Windows" or os.getuid() == 0: 
-                print("Shortcut set to: " + settings["shortcut"])
+                if settings.get("Debug", False):
+                    print("Shortcut set to: " + settings["shortcut"])
                 keyboard.add_hotkey(settings["shortcut"], self.toggle)
             else:
                 print("Shortcut assignment need root priviliges on Unix! No toggle Key assigned.")
@@ -102,20 +103,28 @@ class Gui:
         self.root.config(bg="white")
 
         # Gets the requested values of the height and widht.
-        self.windowWidth = int(self.root.winfo_screenwidth()/2)
-        self.windowHeight = int(self.root.winfo_screenheight()/2)
-         
-        # Gets both half the screen width/height and window width/height
-        self.positionRight = int(self.root.winfo_screenwidth()/2 - self.windowWidth/2)
-        self.positionDown = int(self.root.winfo_screenheight()/2 - self.windowHeight/2)
+        # Set window positon, widdth and heigt
+        if "position" in settings.keys():
+            position = settings["position"]
+            self.windowWidth = int(self.root.winfo_screenwidth()*(1-2*position[0]))
+            self.windowHeight = int(self.root.winfo_screenheight()*(1-position[1]))
+            self.positionX = int(position[0]*self.root.winfo_screenwidth())
+            self.positionY = int(position[1]*self.root.winfo_screenheight())
+        else:
+            self.windowWidth = int(self.root.winfo_screenwidth()/2)
+            self.windowHeight = int(self.root.winfo_screenheight()/2) 
+            self.positionX = int(self.root.winfo_screenwidth()/2 - self.windowWidth/2)
+            self.positionY = int(self.root.winfo_screenheight()/2 - self.windowHeight/2)
           
         # Positions the window in the center of the page.
         self.root.geometry("{}x{}".format(self.windowWidth, self.windowHeight))
-        self.root.geometry("+{}+{}".format(self.positionRight, self.positionDown))
-        self.root.grid_columnconfigure(0, minsize=self.positionRight)
+        self.root.geometry("+{}+{}".format(self.positionX, self.positionY))
+        #self.root.grid_columnconfigure(0, minsize=self.positionX)
+        self.root.grid_columnconfigure(0, minsize=self.windowWidth)
         self.root.wm_attributes("-topmost", True)
-        if not settings.get("Debug", False):
-            self.root.attributes('-alpha', 0.8)
+
+        if platform.system() == "Windows": 
+            self.root.attributes('-alpha', settings.get("opacity", 1))
             self.root.wm_attributes("-transparentcolor", "white")
             self.root.overrideredirect(True)
 
@@ -151,7 +160,5 @@ def LoadSettings(name):
 
 if __name__ == "__main__":
     toolSheet = LoadSettings("vim")
-    print(settings)
-    print(settings.get("Debug", False))
     Ui = Gui()
     Ui.run()
