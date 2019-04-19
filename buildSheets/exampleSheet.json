@@ -1,0 +1,20 @@
+{
+    "entry" : [
+        "Shortcut",
+        "Description",
+        "Tag"
+    ],
+    "visible" : [
+        "Shortcut",
+        "Description"
+    ],
+    "example": [
+        ["Shift+V", "Visaual Line Mode", ["Mode", "Visual"]],
+        ["y", "Copy selection.", ["Copy", "Selection"]],
+        ["i", "switches to insert mode at cursor position.", ["Mode", "Insert"]],
+        ["I", "switches to insert mode at line begin.", ["Mode", "Insert"]],
+        ["a", "switches to insert mode behind cursor position.", ["Mode", "Insert"]],
+        ["A", "switches to insert mode at line end.", ["Mode", "Insert"]],
+        [":w", "Saves the current file.", ["Save"]]
+    ]
+}

@@ -1,24 +1,63 @@
 {
-    "visible" : [
-        "Shortcut",
+    "visible": [
+        "Shortcut", 
         "Description"
     ],
     "vim": [
         {
-            "Shortcut": "Shift+V",
-            "Description": "Visual Line Mode.",
             "Tag": [
-                "Mode",
+                "Mode", 
                 "Visual"
-            ]
-        },
+            ], 
+            "Description": "Visaual Line Mode", 
+            "Shortcut": "Shift+V"
+        }, 
         {
-            "Shortcut": "y",
-            "Description": "Copy selection.",
             "Tag": [
-                "Copy",
+                "Copy", 
                 "Selection"
-            ]
+            ], 
+            "Description": "Copy selection.", 
+            "Shortcut": "y"
+        }, 
+        {
+            "Tag": [
+                "Mode", 
+                "Insert"
+            ], 
+            "Description": "switches to insert mode at cursor position.", 
+            "Shortcut": "i"
+        }, 
+        {
+            "Tag": [
+                "Mode", 
+                "Insert"
+            ], 
+            "Description": "switches to insert mode at line begin.", 
+            "Shortcut": "I"
+        }, 
+        {
+            "Tag": [
+                "Mode", 
+                "Insert"
+            ], 
+            "Description": "switches to insert mode behind cursor position.", 
+            "Shortcut": "a"
+        }, 
+        {
+            "Tag": [
+                "Mode", 
+                "Insert"
+            ], 
+            "Description": "switches to insert mode at line end.", 
+            "Shortcut": "A"
+        }, 
+        {
+            "Tag": [
+                "Save"
+            ], 
+            "Description": "Saves the current file.", 
+            "Shortcut": ":w"
         }
-    ]
+    ] 
 }
