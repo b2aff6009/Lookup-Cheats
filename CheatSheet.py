@@ -115,10 +115,16 @@ class Gui:
         self.root.grid_columnconfigure(0, minsize=self.windowWidth)
         self.root.wm_attributes("-topmost", True)
 
+        if ("cleanKey" in settings.keys()):
+            self.root.bind(settings["cleanKey"], self.clearText)
+
         if platform.system() == "Windows": 
             self.root.attributes('-alpha', settings.get("opacity", 1))
             self.root.wm_attributes("-transparentcolor", "white")
             self.root.overrideredirect(True)
+
+    def clearText(self, event):
+        self.searchBar.delete(0, 'end')
 
     def createSearchBar(self, root, x, y, mRow = 0, mCol = 0):
         self.searchFrame = Frame(self.root, bg="white", width=x, height=y)
