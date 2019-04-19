@@ -103,17 +103,11 @@ class Gui:
 
         # Gets the requested values of the height and widht.
         # Set window positon, widdth and heigt
-        if "position" in settings.keys():
-            position = settings["position"]
-            self.windowWidth = int(self.root.winfo_screenwidth()*(1-2*position[0]))
-            self.windowHeight = int(self.root.winfo_screenheight()*(1-position[1]))
-            self.positionX = int(position[0]*self.root.winfo_screenwidth())
-            self.positionY = int(position[1]*self.root.winfo_screenheight())
-        else:
-            self.windowWidth = int(self.root.winfo_screenwidth()/2)
-            self.windowHeight = int(self.root.winfo_screenheight()/2) 
-            self.positionX = int(self.root.winfo_screenwidth()/2 - self.windowWidth/2)
-            self.positionY = int(self.root.winfo_screenheight()/2 - self.windowHeight/2)
+        position = settings.get("position", [0.25, 0.25])
+        self.windowWidth = int(self.root.winfo_screenwidth()*(1-2*position[0]))
+        self.windowHeight = int(self.root.winfo_screenheight()*(1-position[1]))
+        self.positionX = int(position[0]*self.root.winfo_screenwidth())
+        self.positionY = int(position[1]*self.root.winfo_screenheight())
           
         # Positions the window in the center of the page.
         self.root.geometry("{}x{}".format(self.windowWidth, self.windowHeight))
