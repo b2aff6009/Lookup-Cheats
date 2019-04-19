@@ -11,17 +11,8 @@ settings = {}
 
 class CheatSheetTool:
 
-    def getType(self, data):
-        return str(type(data)).split("'")[1]
 
     def __init__(self, key, path):
-        self.converter = {
-            'dict' : lambda cell : "Dict is not yet supported",
-            'list' : lambda cell : "".join([self.converter[self.getType(entry)](entry) for entry in cell]),
-            'str' : lambda x : x,
-            'int' : lambda x : str(x),
-            'unicode' : lambda x : str(x)
-        }
 
         with open(path, 'rb') as f:
             CheatSheet = json.load(f)
@@ -33,9 +24,17 @@ class CheatSheetTool:
 
 
     def createSearchEntry(self, entry):
-        tosearch = ""
-        for cell in entry:
-            tosearch = "".join(self.converter[self.getType(cell)](cell))
+        getType = lambda data :str(type(data)).split("'")[1]
+        self.converter = {
+            'dict' : lambda cell : "Dict is not yet supported",
+            'list' : lambda cell : " ".join([self.converter[getType(entry)](entry) for entry in cell]),
+            'str' : lambda x : x,
+            'int' : lambda x : str(x),
+            'float' : lambda x : str(x),
+            'unicode' : lambda x : str(x)
+        }
+        
+        tosearch = "".join([self.converter[getType(cell)](cell) for cell in entry])
         return tosearch
 
     def orderResults(self, unorderd):
@@ -119,7 +118,6 @@ class Gui:
         # Positions the window in the center of the page.
         self.root.geometry("{}x{}".format(self.windowWidth, self.windowHeight))
         self.root.geometry("+{}+{}".format(self.positionX, self.positionY))
-        #self.root.grid_columnconfigure(0, minsize=self.positionX)
         self.root.grid_columnconfigure(0, minsize=self.windowWidth)
         self.root.wm_attributes("-topmost", True)
 
@@ -141,7 +139,7 @@ class Gui:
     def update(self, event):
         del self.entrys[:]
 
-        hits = toolSheet.find(self.searchBar.get()) 
+        hits = toolSheet.find(self.searchBar.get())
         for i, hit in enumerate(hits,0):
             newEntry = GuiEntry(hit)
             newEntry.AddLine(self.mainFrame, self.windowWidth, i, 0)
