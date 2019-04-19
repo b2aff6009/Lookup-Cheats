@@ -1,7 +1,7 @@
 {
     "settings" : {
         "shortcut" : "alt+d",
-        "cleanKey" : "esc",
+        "cleanKey" : "<Escape>",
         "Debug" : true,
         "opacity" : 0.5,
         "position" : [0.1, 0.2]

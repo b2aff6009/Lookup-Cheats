@@ -134,7 +134,7 @@ class Gui:
         self.searchBar.grid()
         return self.searchBar
 
-    def update(self, event):
+    def update(self, event = 0):
         del self.entrys[:]
 
         hits = toolSheet.find(self.searchBar.get())
@@ -144,6 +144,7 @@ class Gui:
             self.entrys.append(newEntry)
 
     def run(self):
+        self.update()
         self.root.mainloop()
 
 def LoadSettings(name):
