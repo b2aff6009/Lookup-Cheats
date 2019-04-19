@@ -1,11 +1,13 @@
-from tkinter import *
-import json
-import codecs
-import fuzzyfinder
-import keyboard
+from tkinter import * #used for the user interface
+import json 
+import codecs 
+import fuzzyfinder #Used as backend search tool for searchbar
+import keyboard #used for toggle shortcut
+import platform #for platform check (keyboard need root on unix)
+import os #needed for user id check
  
 SettingsPath = "CheatSheets.json"
-Debug = 1
+settings = {}
 
 class CheatSheetTool:
 
@@ -51,7 +53,7 @@ class GuiEntry:
         self.entry = entry
 
     def __del__(self):
-        if Debug:
+        if settings.get("Debug", False):
             print("Called del")
         self.frame.destroy()
 
@@ -75,7 +77,12 @@ class Gui:
         self.mainFrame = Frame(self.root, width=self.windowWidth, height=int(9*self.windowHeight/10) , bg="white")
         self.mainFrame.grid(row=1)
         self.root.grid()
-        keyboard.add_hotkey('alt+d', self.toggle)
+        if ("shortcut" in settings.keys()):
+            if platform.system() == "Windows" or os.getuid() == 0: 
+                print("Shortcut set to: " + settings["shortcut"])
+                keyboard.add_hotkey(settings["shortcut"], self.toggle)
+            else:
+                print("Shortcut assignment need root priviliges on Unix! No toggle Key assigned.")
         self.vis = True
 
     def toggle(self):
@@ -107,7 +114,7 @@ class Gui:
         self.root.geometry("+{}+{}".format(self.positionRight, self.positionDown))
         self.root.grid_columnconfigure(0, minsize=self.positionRight)
         self.root.wm_attributes("-topmost", True)
-        if not Debug:
+        if not settings.get("Debug", False):
             self.root.attributes('-alpha', 0.8)
             self.root.wm_attributes("-transparentcolor", "white")
             self.root.overrideredirect(True)
@@ -135,12 +142,16 @@ class Gui:
         self.root.mainloop()
 
 def LoadSettings(name):
+    global settings
     with open(SettingsPath, 'rb') as f:
-        cheatSheetsPath = json.load(f)
-    ToolSheet = CheatSheetTool(name, cheatSheetsPath[name]) 
+        configJson = json.load(f)
+    settings = configJson["settings"]
+    ToolSheet = CheatSheetTool(name, configJson["sheets"][name]) 
     return ToolSheet
 
 if __name__ == "__main__":
     toolSheet = LoadSettings("vim")
+    print(settings)
+    print(settings.get("Debug", False))
     Ui = Gui()
     Ui.run()

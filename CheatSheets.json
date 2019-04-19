@@ -1,3 +1,10 @@
 {
-    "vim" : "csVim.json"
+    "settings" : {
+        "shortcut" : "alt+d",
+        "cleanSearchbar" : "esc",
+        "Debug" : true
+    },
+    "sheets" : {
+        "vim" : "csVim.json"
+    }
 }
