@@ -9,7 +9,7 @@
         "Description"
     ],
     "example": [
-        ["Shift+V", "Visaual Line Mode", ["Mode", "Visual"]],
+        ["Shift+V", "Visual Line Mode", ["Mode", "Visual"]],
         ["y", "Copy selection.", ["Copy", "Selection"]],
         ["i", "switches to insert mode at cursor position.", ["Mode", "Insert"]],
         ["I", "switches to insert mode at line begin.", ["Mode", "Insert"]],

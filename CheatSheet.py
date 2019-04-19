@@ -9,9 +9,7 @@ import os #needed for user id check
 SettingsPath = "CheatSheets.json"
 settings = {}
 
-class CheatSheetTool:
-
-
+class FinderCs:
     def __init__(self, key, path):
 
         with open(path, 'rb') as f:
@@ -21,7 +19,6 @@ class CheatSheetTool:
         self.entrys = entrys
         for entry in entrys:
             entry["tosearch"] = self.createSearchEntry(entry.values())
-
 
     def createSearchEntry(self, entry):
         getType = lambda data :str(type(data)).split("'")[1]
@@ -33,7 +30,6 @@ class CheatSheetTool:
             'float' : lambda x : str(x),
             'unicode' : lambda x : str(x)
         }
-        
         tosearch = "".join([self.converter[getType(cell)](cell) for cell in entry])
         return tosearch
 
@@ -48,13 +44,16 @@ class CheatSheetTool:
         return self.orderResults(list(results))
 
 class GuiEntry:
-    def __init__(self, entry):
+    def __init__(self, entry, isHeadline=False):
         self.entry = entry
+        self.isHeadline = isHeadline
+
 
     def __del__(self):
         if settings.get("Debug", False):
             print("Called del")
         self.frame.destroy()
+
 
     def AddLine(self, root, x, mRow = 0, mCol=0):
         colWidth  = int(x/len(self.entry))
@@ -63,19 +62,26 @@ class GuiEntry:
         self.cells = []
         for colNr, colEntry in enumerate(self.entry):
             self.frame.grid_columnconfigure(colNr, minsize=colWidth)
-            self.cells.append(Label(self.frame, text=colEntry, bg="lightblue", anchor=W))
+            if self.isHeadline:
+                self.cells.append(Label(self.frame, text=colEntry, bg="lightblue", bd = 5, anchor=W, font=settings.get("HeadlineFont", 'Helvetica 15 bold')))
+            else:
+                self.cells.append(Label(self.frame, text=colEntry, bg="lightblue", anchor=W))
             self.cells[-1].grid(column=colNr, row=0)
-
         self.frame.grid(row=mRow, column=mCol)
- 
+
+
 class Gui:
-    def __init__(self):
+    def __init__(self, finder):
         self.entrys = []
+        self.finder = finder
         self.createMainWindow()
         self.createSearchBar(self.root, self.windowWidth, int(self.windowHeight/10), 0)
         self.mainFrame = Frame(self.root, width=self.windowWidth, height=int(9*self.windowHeight/10) , bg="white")
         self.mainFrame.grid(row=1)
+        self.addHeadline(self.mainFrame)
         self.root.grid()
+        self.vis = True
+
         if ("shortcut" in settings.keys()):
             if platform.system() == "Windows" or os.getuid() == 0: 
                 if settings.get("Debug", False):
@@ -83,7 +89,7 @@ class Gui:
                 keyboard.add_hotkey(settings["shortcut"], self.toggle)
             else:
                 print("Shortcut assignment need root priviliges on Unix! No toggle Key assigned.")
-        self.vis = True
+
 
     def toggle(self):
         self.root.update()
@@ -95,7 +101,13 @@ class Gui:
             self.root.focus_force()
             self.searchBar.focus()
             self.vis = True
+
+
+    def addHeadline(self, root):
+        self.headline = GuiEntry(self.finder.order, True)
+        self.headline.AddLine(root, self.windowWidth, 0, 0)
         
+
     def createMainWindow(self):
         self.root = Tk()
         self.root.title("Cheatssheets")
@@ -137,8 +149,8 @@ class Gui:
     def update(self, event = 0):
         del self.entrys[:]
 
-        hits = toolSheet.find(self.searchBar.get())
-        for i, hit in enumerate(hits,0):
+        hits = self.finder.find(self.searchBar.get())
+        for i, hit in enumerate(hits,1):
             newEntry = GuiEntry(hit)
             newEntry.AddLine(self.mainFrame, self.windowWidth, i, 0)
             self.entrys.append(newEntry)
@@ -152,10 +164,9 @@ def LoadSettings(name):
     with open(SettingsPath, 'rb') as f:
         configJson = json.load(f)
     settings = configJson["settings"]
-    ToolSheet = CheatSheetTool(name, configJson["sheets"][name]) 
-    return ToolSheet
+    return FinderCs(name, configJson["sheets"][name])
 
 if __name__ == "__main__":
-    toolSheet = LoadSettings("vim")
-    Ui = Gui()
+    finder = LoadSettings("vim")
+    Ui = Gui(finder)
     Ui.run()
