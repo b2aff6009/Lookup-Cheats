@@ -17,7 +17,7 @@ class CheatSheetTool:
         with open(path, 'rb') as f:
             CheatSheet = json.load(f)
         entrys = CheatSheet[key]
-        self.order = CheatSheet["entry"]
+        self.order = CheatSheet["visible"]
         self.entrys = entrys
         for entry in entrys:
             entry["tosearch"] = self.createSearchEntry(entry.values())
