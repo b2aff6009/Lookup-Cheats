@@ -5,7 +5,8 @@
         "Debug" : true,
         "opacity" : 0.5,
         "position" : [0.1, 0.2],
-        "HeadlineFont" : "Helvetica 15 bold"
+        "HeadlineFont" : "Helvetica 15 bold",
+        "AllowOverwrite" : true
     },
     "sheets" : {
         "vim" : "csVim.json"

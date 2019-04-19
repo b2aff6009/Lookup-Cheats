@@ -10,12 +10,10 @@ SettingsPath = "CheatSheets.json"
 settings = {}
 
 class FinderCs:
-    def __init__(self, key, path):
+    def __init__(self, key, data):
 
-        with open(path, 'rb') as f:
-            CheatSheet = json.load(f)
-        entrys = CheatSheet[key]
-        self.order = CheatSheet["visible"]
+        entrys = data[key]
+        self.order = data["visible"]
         self.entrys = entrys
         for entry in entrys:
             entry["tosearch"] = self.createSearchEntry(entry.values())
@@ -164,7 +162,14 @@ def LoadSettings(name):
     with open(SettingsPath, 'rb') as f:
         configJson = json.load(f)
     settings = configJson["settings"]
-    return FinderCs(name, configJson["sheets"][name])
+
+    with open(configJson["sheets"][name], 'rb') as f:
+        data = json.load(f)
+    #Overwrite global settings with specific sheet settings
+    if settings.get("AllowOverwrite", True):
+        for key in data["settings"] :
+            settings[key] = data["settings"][key]
+    return FinderCs(name, data)
 
 if __name__ == "__main__":
     finder = LoadSettings("vim")
