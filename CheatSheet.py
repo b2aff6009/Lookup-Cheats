@@ -20,15 +20,12 @@ class FinderCs:
 
     def createSearchEntry(self, entry):
         getType = lambda data :str(type(data)).split("'")[1]
+        useConverter = lambda entry : self.converter.get(getType(entry), lambda x : str(x))(entry)
         self.converter = {
             'dict' : lambda cell : "Dict is not yet supported",
-            'list' : lambda cell : " ".join([self.converter[getType(entry)](entry) for entry in cell]),
-            'str' : lambda x : x,
-            'int' : lambda x : str(x),
-            'float' : lambda x : str(x),
-            'unicode' : lambda x : str(x)
+            'list' : lambda cell : " ".join([useConverter(entry) for entry in cell])
         }
-        tosearch = "".join([self.converter[getType(cell)](cell) for cell in entry])
+        tosearch = "".join([useConverter(cell) for cell in entry])
         return tosearch
 
     def orderResults(self, unorderd):
@@ -118,7 +115,7 @@ class Gui:
         self.windowHeight = int(self.root.winfo_screenheight()*(1-position[1]))
         self.positionX = int(position[0]*self.root.winfo_screenwidth())
         self.positionY = int(position[1]*self.root.winfo_screenheight())
-          
+
         # Positions the window in the center of the page.
         self.root.geometry("{}x{}".format(self.windowWidth, self.windowHeight))
         self.root.geometry("+{}+{}".format(self.positionX, self.positionY))
@@ -129,9 +126,11 @@ class Gui:
             self.root.bind(settings["cleanKey"], lambda x: self.searchBar.delete(0, 'end'))
 
         if platform.system() == "Windows": 
-            self.root.attributes('-alpha', settings.get("opacity", 1))
             self.root.wm_attributes("-transparentcolor", "white")
             self.root.overrideredirect(True)
+        else:
+            self.root.attributes('-type', 'normal')
+        self.root.attributes('-alpha', settings.get("opacity", 1))
 
 
     def createSearchBar(self, root, x, y, mRow = 0, mCol = 0):
