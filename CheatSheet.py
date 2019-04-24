@@ -53,8 +53,11 @@ class GuiEntry:
             if self.isHeadline:
                 self.cells.append(Label(self.frame, text=colEntry, bg="lightblue", bd = 5, anchor=W, font=settings.get("HeadlineFont", 'Helvetica 15 bold')))
             else:
-                self.cells.append(Label(self.frame, text=colEntry, bg="lightblue", anchor=W))
-            self.cells[-1].grid(column=colNr, row=0)
+                self.cells.append(Label(self.frame, text=colEntry, bg="lightblue", anchor=W, justify=LEFT))
+            if settings.get("multiLineEntry", False):
+                self.cells[-1].grid(column=0, row=colNr)
+            else:
+                self.cells[-1].grid(column=colNr, row=0)
         self.frame.pack()
 
     def __del__(self):
@@ -79,7 +82,8 @@ class Gui:
         for i in range(0, settings.get("columns",1)):
             self.mainFrames.append(Frame(self.mainFrame, width=self.frameWidth, height=int(9*self.windowHeight/10) , bg="white"))
             self.mainFrames[-1].grid(row = 1, column=i)
-            self.headlines.append(GuiEntry(self.finder.order, True, self.mainFrames[-1], self.frameWidth))
+            if not settings.get("multiLineEntry", False):
+                self.headlines.append(GuiEntry(self.finder.order, True, self.mainFrames[-1], self.frameWidth))
 
         self.root.grid()
         self.vis = True
