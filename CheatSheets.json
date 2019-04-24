@@ -6,7 +6,8 @@
         "opacity" : 0.8,
         "position" : [0.2, 0.2],
         "HeadlineFont" : "Helvetica 15 bold",
-        "AllowOverwrite" : true
+        "AllowOverwrite" : true,
+        "columns" : 2
     },
     "sheets" : {
         "vim" : "csVim.json"

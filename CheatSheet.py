@@ -67,12 +67,20 @@ class Gui:
     def __init__(self, finder):
         self.entrys = []
         self.visbleDict = {}
+        self.mainFrames = []
+        self.headlines = []
         self.finder = finder
         self.createMainWindow()
         self.createSearchBar(self.root, self.windowWidth, int(self.windowHeight/10), 0)
+
+        self.frameWidth = self.windowWidth/settings.get("columns",1)
         self.mainFrame = Frame(self.root, width=self.windowWidth, height=int(9*self.windowHeight/10) , bg="white")
         self.mainFrame.grid(row=1)
-        self.headline = GuiEntry(self.finder.order, True, self.mainFrame, self.windowWidth)
+        for i in range(0, settings.get("columns",1)):
+            self.mainFrames.append(Frame(self.mainFrame, width=self.frameWidth, height=int(9*self.windowHeight/10) , bg="white"))
+            self.mainFrames[-1].grid(row = 1, column=i)
+            self.headlines.append(GuiEntry(self.finder.order, True, self.mainFrames[-1], self.frameWidth))
+
         self.root.grid()
         self.vis = True
 
@@ -141,6 +149,10 @@ class Gui:
 
     def update(self, event = 0):
         hits = self.finder.find(self.searchBar.get())
+
+        if settings.get("columns", 1) > 1:
+            for key in self.visbleDict.keys():
+                del self.visbleDict[key]
         
         for eId in self.visbleDict.keys():
             if eId not in hits.keys():
@@ -148,7 +160,7 @@ class Gui:
 
         for eId in hits.keys():
             if eId not in self.visbleDict.keys():
-                self.visbleDict[eId] = GuiEntry(hits[eId], False, self.mainFrame, self.windowWidth)
+                self.visbleDict[eId] = GuiEntry(hits[eId], False, self.mainFrames[len(self.visbleDict.keys())%settings.get("columns",1)], self.frameWidth)
 
     def run(self):
         self.update()
