@@ -15,8 +15,10 @@ class FinderCs:
         entrys = data[key]
         self.order = data["visible"]
         self.entrys = entrys
-        for entry in entrys:
+        self.entryDict = {}
+        for i,entry in enumerate(entrys):
             entry["tosearch"] = self.createSearchEntry(entry.values())
+            entry["id"] = i
 
     def createSearchEntry(self, entry):
         getType = lambda data :str(type(data)).split("'")[1]
@@ -29,9 +31,9 @@ class FinderCs:
         return tosearch
 
     def orderResults(self, unorderd):
-        results = []
+        results = {}
         for entry in unorderd:
-            results.append([entry[step] for step in self.order]) 
+            results[entry["id"]] = [entry[step] for step in self.order]
         return results
 
     def find(self, text):
@@ -53,7 +55,7 @@ class GuiEntry:
             else:
                 self.cells.append(Label(self.frame, text=colEntry, bg="lightblue", anchor=W))
             self.cells[-1].grid(column=colNr, row=0)
-        self.frame.grid(row=mRow, column=mCol)
+        self.frame.pack()
 
     def __del__(self):
         if settings.get("Debug", False):
@@ -64,6 +66,7 @@ class GuiEntry:
 class Gui:
     def __init__(self, finder):
         self.entrys = []
+        self.visbleDict = {}
         self.finder = finder
         self.createMainWindow()
         self.createSearchBar(self.root, self.windowWidth, int(self.windowHeight/10), 0)
@@ -108,7 +111,7 @@ class Gui:
         self.positionY = int(position[1]*self.root.winfo_screenheight())
 
         # Positions the window in the center of the page.
-        if platform.system() != "Linux": 
+        if platform.system() != "Linux":
             self.root.geometry("{}x{}".format(self.windowWidth, self.windowHeight))
         self.root.geometry("+{}+{}".format(self.positionX, self.positionY))
         self.root.grid_columnconfigure(0, minsize=self.windowWidth)
@@ -137,12 +140,15 @@ class Gui:
         return self.searchBar
 
     def update(self, event = 0):
-        del self.entrys[:]
-
         hits = self.finder.find(self.searchBar.get())
-        for i, hit in enumerate(hits,1):
-            newEntry = GuiEntry(hit, False, self.mainFrame, self.windowWidth, i, 0)
-            self.entrys.append(newEntry)
+        
+        for eId in self.visbleDict.keys():
+            if eId not in hits.keys():
+                del self.visbleDict[eId] 
+
+        for eId in hits.keys():
+            if eId not in self.visbleDict.keys():
+                self.visbleDict[eId] = GuiEntry(hits[eId], False, self.mainFrame, self.windowWidth)
 
     def run(self):
         self.update()
