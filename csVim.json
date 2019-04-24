@@ -1,6 +1,5 @@
 {
     "settings" : {
-        "position" : [0.3, 0.2],
         "HeadlineFont" : "Helvetica 20 bold"
     },
     "visible": [

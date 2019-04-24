@@ -3,8 +3,8 @@
         "shortcut" : "alt+d",
         "cleanKey" : "<Escape>",
         "Debug" : true,
-        "opacity" : 0.5,
-        "position" : [0.1, 0.2],
+        "opacity" : 0.8,
+        "position" : [0.2, 0.2],
         "HeadlineFont" : "Helvetica 15 bold",
         "AllowOverwrite" : true
     },

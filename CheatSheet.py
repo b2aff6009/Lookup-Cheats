@@ -130,6 +130,7 @@ class Gui:
             self.root.overrideredirect(True)
         else:
             self.root.attributes('-type', 'normal')
+            self.root.wait_visibility(self.root)
         self.root.attributes('-alpha', settings.get("opacity", 1))
 
 
