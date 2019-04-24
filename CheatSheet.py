@@ -39,22 +39,13 @@ class FinderCs:
         return self.orderResults(list(results))
 
 class GuiEntry:
-    def __init__(self, entry, isHeadline=False):
+    def __init__(self, entry, isHeadline, root, x, mRow = 0, mCol=0):
         self.entry = entry
         self.isHeadline = isHeadline
-
-
-    def __del__(self):
-        if settings.get("Debug", False):
-            print("Called del")
-        self.frame.destroy()
-
-
-    def AddLine(self, root, x, mRow = 0, mCol=0):
-        colWidth  = int(x/len(self.entry))
-
         self.frame = Frame(root, width=x, bg="yellow")
         self.cells = []
+
+        colWidth  = int(x/len(self.entry))
         for colNr, colEntry in enumerate(self.entry):
             self.frame.grid_columnconfigure(colNr, minsize=colWidth)
             if self.isHeadline:
@@ -63,6 +54,11 @@ class GuiEntry:
                 self.cells.append(Label(self.frame, text=colEntry, bg="lightblue", anchor=W))
             self.cells[-1].grid(column=colNr, row=0)
         self.frame.grid(row=mRow, column=mCol)
+
+    def __del__(self):
+        if settings.get("Debug", False):
+            print("Called del")
+        self.frame.destroy()
 
 
 class Gui:
@@ -73,7 +69,7 @@ class Gui:
         self.createSearchBar(self.root, self.windowWidth, int(self.windowHeight/10), 0)
         self.mainFrame = Frame(self.root, width=self.windowWidth, height=int(9*self.windowHeight/10) , bg="white")
         self.mainFrame.grid(row=1)
-        self.addHeadline(self.mainFrame)
+        self.headline = GuiEntry(self.finder.order, True, self.mainFrame, self.windowWidth)
         self.root.grid()
         self.vis = True
 
@@ -97,11 +93,6 @@ class Gui:
             self.searchBar.focus()
             self.vis = True
 
-
-    def addHeadline(self, root):
-        self.headline = GuiEntry(self.finder.order, True)
-        self.headline.AddLine(root, self.windowWidth, 0, 0)
-        
 
     def createMainWindow(self):
         self.root = Tk()
@@ -150,8 +141,7 @@ class Gui:
 
         hits = self.finder.find(self.searchBar.get())
         for i, hit in enumerate(hits,1):
-            newEntry = GuiEntry(hit)
-            newEntry.AddLine(self.mainFrame, self.windowWidth, i, 0)
+            newEntry = GuiEntry(hit, False, self.mainFrame, self.windowWidth, i, 0)
             self.entrys.append(newEntry)
 
     def run(self):
