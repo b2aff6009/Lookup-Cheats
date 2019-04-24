@@ -117,7 +117,8 @@ class Gui:
         self.positionY = int(position[1]*self.root.winfo_screenheight())
 
         # Positions the window in the center of the page.
-        self.root.geometry("{}x{}".format(self.windowWidth, self.windowHeight))
+        if platform.system() != "Linux": 
+            self.root.geometry("{}x{}".format(self.windowWidth, self.windowHeight))
         self.root.geometry("+{}+{}".format(self.positionX, self.positionY))
         self.root.grid_columnconfigure(0, minsize=self.windowWidth)
         self.root.wm_attributes("-topmost", True)
