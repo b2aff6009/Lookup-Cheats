@@ -170,6 +170,19 @@ class Gui:
         self.update()
         self.root.mainloop()
 
+def parseShortSheet(cheatSheet, valueKey):
+    keyList = cheatSheet["entry"]
+    valueList = cheatSheet[valueKey]
+    data = {}
+    data["visible"] = cheatSheet["visible"]
+    data[valueKey] = []
+    for value in valueList:
+        entry = {}
+        for i,key in enumerate(keyList,0):
+            entry[key] = value[i]
+        data[valueKey].append(entry)
+    return data
+
 def LoadSettings(name):
     global settings
     with open(SettingsPath, 'rb') as f:
@@ -182,9 +195,12 @@ def LoadSettings(name):
     if settings.get("AllowOverwrite", True):
         for key in data["settings"] :
             settings[key] = data["settings"][key]
+
+    if (settings.get("shortSheet", False)):
+        data = parseShortSheet(data, name)
     return FinderCs(name, data)
 
 if __name__ == "__main__":
-    finder = LoadSettings("vim")
+    finder = LoadSettings("python")
     Ui = Gui(finder)
     Ui.run()
