@@ -10,15 +10,18 @@ SettingsPath = "CheatSheets.json"
 settings = {}
 
 class FinderCs:
-    def __init__(self, key, data):
-
-        entrys = data[key]
-        self.order = data["visible"]
-        self.entrys = entrys
-        self.entryDict = {}
-        for i,entry in enumerate(entrys):
-            entry["tosearch"] = self.createSearchEntry(entry.values())
-            entry["id"] = i
+    def __init__(self, key, data, isSheetSelector = False):
+        if isSheetSelector:
+            self.entrys = []
+            self.order = ["name", "path"]
+            for i, entry in enumerate(data[key]):
+                self.entrys.append({"name": entry, "id": i, "tosearch" : entry + data[key][entry], "path": data[key][entry]})
+        else:
+            self.entrys = data[key]
+            self.order = data["visible"]
+            for i,entry in enumerate(self.entrys):
+                entry["tosearch"] = self.createSearchEntry(entry.values())
+                entry["id"] = i
 
     def createSearchEntry(self, entry):
         getType = lambda data :str(type(data)).split("'")[1]
@@ -37,13 +40,28 @@ class FinderCs:
         return results
 
     def find(self, text):
-        results = fuzzyfinder.fuzzyfinder(text, self.entrys, accessor=lambda x: x["tosearch"])
-        return self.orderResults(list(results))
+        results = self.orderResults(list(fuzzyfinder.fuzzyfinder(text, self.entrys, accessor=lambda x: x["tosearch"])))
+        return results
+
+class ListEntry:
+    def __init__(self, entry, eId, root):
+        text = " ".join(entry)
+        self.root = root    
+        root.insert(END,  text)
+        self.id = eId
+    
+    def __del__(self):
+        if settings.get("Debug", False):
+            print("Called del")
+        self.root.delete(self.id)
 
 class GuiEntry:
     def __init__(self, entry, isHeadline, root, x, mRow = 0, mCol=0):
         self.entry = entry
         self.isHeadline = isHeadline
+        if(root.widgetName == "listbox"):
+            root.insert(END,  entry)
+            return
         self.frame = Frame(root, width=x, bg="yellow")
         self.cells = []
 
@@ -67,7 +85,7 @@ class GuiEntry:
 
 
 class Gui:
-    def __init__(self, finder):
+    def __init__(self, finder, isSheetSelector = False):
         self.entrys = []
         self.visbleDict = {}
         self.mainFrames = []
@@ -79,14 +97,23 @@ class Gui:
         self.frameWidth = self.windowWidth/settings.get("columns",1)
         self.mainFrame = Frame(self.root, width=self.windowWidth, height=int(9*self.windowHeight/10) , bg="white")
         self.mainFrame.grid(row=1)
-        for i in range(0, settings.get("columns",1)):
-            self.mainFrames.append(Frame(self.mainFrame, width=self.frameWidth, height=int(9*self.windowHeight/10) , bg="white"))
-            self.mainFrames[-1].grid(row = 1, column=i)
-            if not settings.get("multiLineEntry", False):
-                self.headlines.append(GuiEntry(self.finder.order, True, self.mainFrames[-1], self.frameWidth))
+
+        if isSheetSelector:
+            self.mainFrame = Listbox(self.mainFrame)
+            self.mainFrame.pack()
+        else:
+            colNr = settings.get("columns", 1)
+            for i in range(0, colNr):
+                self.mainFrames.append(Frame(self.mainFrame, width=self.frameWidth, height=int(9*self.windowHeight/10) , bg="white"))
+                self.mainFrames[-1].grid(row = 1, column=i)
+                if not settings.get("multiLineEntry", False):
+                    self.headlines.append(GuiEntry(self.finder.order, True, self.mainFrames[-1], self.frameWidth))
 
         self.root.grid()
         self.vis = True
+
+        if ("cleanKey" in settings.keys()):
+            self.root.bind(settings["cleanKey"], lambda x: self.searchBar.delete(0, 'end'))
 
         if ("shortcut" in settings.keys()):
             if platform.system() == "Windows" or os.getuid() == 0: 
@@ -129,9 +156,6 @@ class Gui:
         self.root.grid_columnconfigure(0, minsize=self.windowWidth)
         self.root.wm_attributes("-topmost", True)
 
-        if ("cleanKey" in settings.keys()):
-            self.root.bind(settings["cleanKey"], lambda x: self.searchBar.delete(0, 'end'))
-
         if platform.system() == "Windows": 
             self.root.wm_attributes("-transparentcolor", "white")
             self.root.overrideredirect(True)
@@ -164,7 +188,11 @@ class Gui:
 
         for eId in hits.keys():
             if eId not in self.visbleDict.keys():
-                self.visbleDict[eId] = GuiEntry(hits[eId], False, self.mainFrames[len(self.visbleDict.keys())%settings.get("columns",1)], self.frameWidth)
+                if (self.mainFrame.widgetName == "frame"):
+                    frame = self.mainFrames[len(self.visbleDict.keys())%settings.get("columns",1)]
+                    self.visbleDict[eId] = GuiEntry(hits[eId], False, frame, self.frameWidth)
+                else:
+                    self.visbleDict[eId] = ListEntry(hits[eId], eId, self.mainFrame)
 
     def run(self):
         self.update()
@@ -189,8 +217,14 @@ def LoadSettings(name):
         configJson = json.load(f)
     settings = configJson["settings"]
 
-    with open(configJson["sheets"][name], 'rb') as f:
-        data = json.load(f)
+    if  name == "":
+        selector = FinderCs("sheets", configJson, True)
+        selectGui = Gui(selector, True)
+        selectGui.run()
+    else:
+        with open(configJson["sheets"][name], 'rb') as f:
+            data = json.load(f)
+
     #Overwrite global settings with specific sheet settings
     if settings.get("AllowOverwrite", True):
         for key in data["settings"] :
@@ -201,6 +235,7 @@ def LoadSettings(name):
     return FinderCs(name, data)
 
 if __name__ == "__main__":
-    finder = LoadSettings("python")
+    #finder = LoadSettings("python")
+    finder = LoadSettings("")
     Ui = Gui(finder)
     Ui.run()
