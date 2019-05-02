@@ -45,15 +45,20 @@ class FinderCs:
 
 class ListEntry:
     def __init__(self, entry, eId, root):
+        self.entry = entry
         text = " ".join(entry)
         self.root = root    
         root.insert(END,  text)
         self.id = eId
+        root.selection_set(first=0)
     
     def __del__(self):
         if settings.get("Debug", False):
             print("Called del")
         self.root.delete(self.id)
+        self.root.selection_clear(0, END)
+        self.root.selection_set(first=0)
+        self.root.activate(0)
 
 class GuiEntry:
     def __init__(self, entry, isHeadline, root, x, mRow = 0, mCol=0):
@@ -90,6 +95,7 @@ class Gui:
         self.visbleDict = {}
         self.mainFrames = []
         self.headlines = []
+        self.sheet = ""
         self.finder = finder
         self.createMainWindow()
         self.createSearchBar(self.root, self.windowWidth, int(self.windowHeight/10), 0)
@@ -99,8 +105,11 @@ class Gui:
         self.mainFrame.grid(row=1)
 
         if isSheetSelector:
-            self.mainFrame = Listbox(self.mainFrame)
+            self.mainFrame = Listbox(self.mainFrame, selectmode=SINGLE)
             self.mainFrame.pack()
+            self.root.bind(settings.get("selectKey",'<Return>'), self.execute)
+            self.root.bind(settings.get("selectionUp",'<Up>'), self.changeSelection)
+            self.root.bind(settings.get("selectionDown",'<Down>'), self.changeSelection)
         else:
             colNr = settings.get("columns", 1)
             for i in range(0, colNr):
@@ -115,6 +124,7 @@ class Gui:
         if ("cleanKey" in settings.keys()):
             self.root.bind(settings["cleanKey"], lambda x: self.searchBar.delete(0, 'end'))
 
+
         if ("shortcut" in settings.keys()):
             if platform.system() == "Windows" or os.getuid() == 0: 
                 if settings.get("Debug", False):
@@ -123,6 +133,24 @@ class Gui:
             else:
                 print("Shortcut assignment need root priviliges on Unix! No toggle Key assigned.")
 
+
+    def execute(self, event):
+        for i, key in enumerate(self.visbleDict.keys()):
+            if i == self.mainFrame.curselection()[0]:
+                if settings.get("Debug", False):
+                    print(self.visbleDict[key].entry)
+                self.sheet = self.visbleDict[key].entry[0]
+                self.root.destroy()
+
+    def changeSelection(self, event):
+        if(settings.get("selectionUp",'<Up>') == ("<" + event.keysym + ">")):
+                direction = -1
+        elif(settings.get("selectionDown",'<Down>') == ("<" + event.keysym + ">")):
+                direction = 1
+        newSelection = self.mainFrame.curselection()[0] + direction
+        self.mainFrame.select_clear(0,END)
+        self.mainFrame.selection_set(first = newSelection)
+        self.mainFrame.activate(newSelection)
 
     def toggle(self):
         self.root.update()
@@ -221,6 +249,7 @@ def LoadSettings(name):
         selector = FinderCs("sheets", configJson, True)
         selectGui = Gui(selector, True)
         selectGui.run()
+        return LoadSettings(selectGui.sheet)
     else:
         with open(configJson["sheets"][name], 'rb') as f:
             data = json.load(f)
