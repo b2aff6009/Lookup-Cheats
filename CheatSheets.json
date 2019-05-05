@@ -8,6 +8,7 @@
         "HeadlineFont" : "Helvetica 15 bold",
         "AllowOverwrite" : true,
         "multiLineEntry" : false,
+        "maxEntrys": 50,
         "columns" : 2
     },
     "sheets" : {

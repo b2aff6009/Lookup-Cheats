@@ -5,6 +5,7 @@ import fuzzyfinder #Used as backend search tool for searchbar
 import keyboard #used for toggle shortcut
 import platform #for platform check (keyboard need root on unix)
 import os #needed for user id check
+import threading
  
 SettingsPath = "CheatSheets.json"
 settings = {}
@@ -122,6 +123,7 @@ class Gui:
 
         self.root.grid()
         self.vis = True
+        self.worker = threading.Thread()
 
         if ("cleanKey" in settings.keys()):
             self.root.bind(settings["cleanKey"], lambda x: self.searchBar.delete(0, 'end'))
@@ -207,6 +209,11 @@ class Gui:
         return self.searchBar
 
     def update(self, event = 0):
+        del self.worker
+        self.worker = threading.Thread(target=self.updateGui)
+        self.worker.start()
+
+    def updateGui(self):
         hits = self.finder.find(self.searchBar.get())
 
         if settings.get("columns", 1) > 1 and self.mainFrame.widgetName == "frame":
@@ -218,6 +225,8 @@ class Gui:
                 del self.visbleDict[eId] 
 
         for eId in hits.keys():
+            if len(self.visbleDict) >= settings.get("maxEntrys", 30):
+                break;
             if eId not in self.visbleDict.keys():
                 if (self.mainFrame.widgetName == "frame"):
                     frame = self.mainFrames[len(self.visbleDict.keys())%settings.get("columns",1)]
