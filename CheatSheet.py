@@ -62,25 +62,29 @@ class ListEntry:
 
 class GuiEntry:
     def __init__(self, entry, isHeadline, root, x, mRow = 0, mCol=0):
+        bgColors = ["SkyBlue1", "SkyBlue2", "SkyBlue3"]
         self.entry = entry
         self.isHeadline = isHeadline
         if(root.widgetName == "listbox"):
             root.insert(END,  entry)
             return
-        self.frame = Frame(root, width=x, bg="yellow")
+        self.frame = Frame(root, width=x, bg=bgColors[2], bd=5)
         self.cells = []
 
         colWidth  = int(x/len(self.entry))
+        labelFont = settings.get("HeadlineFont", 'Helvetica 15 bold') if isHeadline else settings.get("Font", 'Helvetica 11')
         for colNr, colEntry in enumerate(self.entry):
             self.frame.grid_columnconfigure(colNr, minsize=colWidth)
-            if self.isHeadline:
+            self.cells.append(Label(self.frame, text=colEntry, bg=bgColors[colNr%2], bd = 1, anchor=W, font=labelFont))
+            '''if self.isHeadline:
                 self.cells.append(Label(self.frame, text=colEntry, bg="lightblue", bd = 5, anchor=W, font=settings.get("HeadlineFont", 'Helvetica 15 bold')))
             else:
-                self.cells.append(Label(self.frame, text=colEntry, bg="lightblue", anchor=W, justify=LEFT))
+                self.cells.append(Label(self.frame, text=colEntry, bg="lightblue", anchor=W, justify=LEFT))'''
+
             if settings.get("multiLineEntry", False):
-                self.cells[-1].grid(column=0, row=colNr)
+                self.cells[-1].grid(column=0, row=colNr, sticky="W")
             else:
-                self.cells[-1].grid(column=colNr, row=0)
+                self.cells[-1].grid(column=colNr, row=0, sticky="W")
         self.frame.pack()
 
     def __del__(self):

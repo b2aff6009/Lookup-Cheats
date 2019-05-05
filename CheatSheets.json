@@ -3,11 +3,12 @@
         "shortcut" : "alt+d",
         "cleanKey" : "<Escape>",
         "Debug" : true,
-        "opacity" : 0.8,
+        "opacity" : 0.9,
         "position" : [0.2, 0.2],
         "HeadlineFont" : "Helvetica 15 bold",
         "AllowOverwrite" : true,
-        "columns" : 1
+        "multiLineEntry" : true,
+        "columns" : 2
     },
     "sheets" : {
         "vim" : "csVim.json",
