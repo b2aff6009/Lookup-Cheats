@@ -7,11 +7,11 @@
         "position" : [0.2, 0.2],
         "HeadlineFont" : "Helvetica 15 bold",
         "AllowOverwrite" : true,
-        "multiLineEntry" : true,
+        "multiLineEntry" : false,
         "columns" : 2
     },
     "sheets" : {
-        "vim" : "csVim.json",
+        "vim" : "vim.json",
         "python" : "python.json"
     }
 }
