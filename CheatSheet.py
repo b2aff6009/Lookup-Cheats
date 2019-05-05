@@ -76,16 +76,12 @@ class GuiEntry:
         for colNr, colEntry in enumerate(self.entry):
             self.frame.grid_columnconfigure(colNr, minsize=colWidth)
             self.cells.append(Label(self.frame, text=colEntry, bg=bgColors[colNr%2], bd = 1, anchor=W, font=labelFont))
-            '''if self.isHeadline:
-                self.cells.append(Label(self.frame, text=colEntry, bg="lightblue", bd = 5, anchor=W, font=settings.get("HeadlineFont", 'Helvetica 15 bold')))
-            else:
-                self.cells.append(Label(self.frame, text=colEntry, bg="lightblue", anchor=W, justify=LEFT))'''
 
             if settings.get("multiLineEntry", False):
                 self.cells[-1].grid(column=0, row=colNr, sticky="W")
             else:
                 self.cells[-1].grid(column=colNr, row=0, sticky="W")
-        self.frame.pack()
+        self.frame.pack(fill=X)
 
     def __del__(self):
         if settings.get("Debug", False):
@@ -210,7 +206,7 @@ class Gui:
     def update(self, event = 0):
         hits = self.finder.find(self.searchBar.get())
 
-        if settings.get("columns", 1) > 1:
+        if settings.get("columns", 1) > 1 and self.mainFrame.widgetName == "frame":
             for key in self.visbleDict.keys():
                 del self.visbleDict[key]
         
@@ -268,7 +264,6 @@ def LoadSettings(name):
     return FinderCs(name, data)
 
 if __name__ == "__main__":
-    #finder = LoadSettings("python")
     finder = LoadSettings("")
     Ui = Gui(finder)
     Ui.run()
