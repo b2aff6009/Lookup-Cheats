@@ -68,19 +68,21 @@ class GuiEntry:
         if(root.widgetName == "listbox"):
             root.insert(END,  entry)
             return
-        self.frame = Frame(root, width=x, bg=bgColors[2], bd=5)
+        self.frame = Frame(root, bg=bgColors[2], bd=2, relief=SOLID)
+        #self.frame = Frame(root, width=x, bg=bgColors[2], bd=5)
         self.cells = []
 
         colWidth  = int(x/len(self.entry))
         labelFont = settings.get("HeadlineFont", 'Helvetica 15 bold') if isHeadline else settings.get("Font", 'Helvetica 11')
         for colNr, colEntry in enumerate(self.entry):
             self.frame.grid_columnconfigure(colNr, minsize=colWidth)
-            self.cells.append(Label(self.frame, text=colEntry, bg=bgColors[colNr%2], bd = 1, anchor=W, font=labelFont))
+            bgColor = bgColors[2] if isHeadline else bgColors[colNr%2]
+            self.cells.append(Label(self.frame, text=colEntry, bg=bgColor, bd = 1, anchor=W, font=labelFont))
 
             if settings.get("multiLineEntry", False):
-                self.cells[-1].grid(column=0, row=colNr, sticky="W")
+                self.cells[-1].grid(column=0, row=colNr, sticky=E+W)
             else:
-                self.cells[-1].grid(column=colNr, row=0, sticky="W")
+                self.cells[-1].grid(column=colNr, row=0, sticky=E+W)
         self.frame.pack(fill=X)
 
     def __del__(self):
@@ -181,7 +183,7 @@ class Gui:
         if platform.system() != "Linux":
             self.root.geometry("{}x{}".format(self.windowWidth, self.windowHeight))
         self.root.geometry("+{}+{}".format(self.positionX, self.positionY))
-        self.root.grid_columnconfigure(0, minsize=self.windowWidth)
+        #self.root.grid_columnconfigure(0, minsize=self.windowWidth)
         self.root.wm_attributes("-topmost", True)
 
         if platform.system() == "Windows": 
@@ -194,9 +196,10 @@ class Gui:
 
 
     def createSearchBar(self, root, x, y, mRow = 0, mCol = 0):
-        self.searchFrame = Frame(self.root, bg="white", width=x, height=y)
+        self.searchFrame = Frame(self.root, bg="white", height=y)
+        #self.searchFrame = Frame(self.root, bg="white", width=x, height=y)
+        #self.searchFrame.grid_columnconfigure(0, minsize=int(x))
         self.searchFrame.grid(row=mRow, column=mCol)
-        self.searchFrame.grid_columnconfigure(0, minsize=int(x))
         self.searchBar = Entry(self.searchFrame, bg="grey", justify=CENTER)
         self.searchBar.bind("<KeyRelease>", self.update)
         self.searchBar.focus_set()
