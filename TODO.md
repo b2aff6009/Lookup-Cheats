@@ -14,7 +14,7 @@
 ## Backend
     ### Crawler
         - Implement a crawler
-        - search for cs files in given directoies (dir's from settings)
+        - search for csh files in given directoies (dir's from settings)
     ### Gui
         - Add a better multi screen support
         - Check if Gui works on all three platform (Linux: done, Windows: <>, Mac: <>)

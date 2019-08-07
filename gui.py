@@ -38,15 +38,13 @@ class ListEntry:
     '''List Entrys are used to fill the cheatsheet selection listView'''
     def __init__(self, entry, eId, root):
         self.entry = entry
-        text = " ".join(entry)
+        text = entry[0]
         self.root = root    
         root.insert(END,  text)
         self.id = eId
         root.selection_set(first=0)
     
     def __del__(self):
-        if settings.get("Debug", False):
-            print("Called del")
         self.root.delete(self.id)
         self.root.selection_clear(0, END)
         self.root.selection_set(first=0)

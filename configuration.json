@@ -12,8 +12,16 @@
         "maxEntrys": 50,
         "columns" : 2
     },
+    "crawler" : {
+        "use" : true,
+        "recrusive" : false,
+        "extension" : ".csh",
+        "directories" : [
+            "./"
+        ]
+    },
     "sheets" : {
-        "vim" : "vim.json",
-        "python" : "python.json"
+        "vim" : "vim.csh",
+        "python" : "python.csh"
     }
 }

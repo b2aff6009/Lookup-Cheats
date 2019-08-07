@@ -4,6 +4,7 @@ import psutil
 import platform
 
 import finder
+import crawler
 import gui
  
 SettingsPath = "configuration.json"
@@ -30,21 +31,28 @@ def parseShortSheet(cheatSheet):
         data["common"].append(entry)
     return data
 
+def SelectSheet(sheets):
+    selector = finder.Finder(sheets, True)
+    selectGui = gui.Gui(selector, settings,  True)
+    selectGui.run()
+    return selectGui.sheet
+
 def LoadSettings(name):
     global settings
     with open(SettingsPath, 'rb') as f:
         configJson = json.load(f)
     settings = configJson["settings"]
-    print(getProcessName())
-    if  name == "":
-        selector = finder.Finder("sheets", configJson, True)
-        selectGui = gui.Gui(selector, settings,  True)
-        selectGui.run()
-        return LoadSettings(selectGui.sheet)
-    else:
-        with open(configJson["sheets"][name], 'rb') as f:
-            data = json.load(f)
-        data["common"].extend(data.get(osName(), []))
+    if (configJson.get("crawler", {}).get("use", False) == True):
+        sheetCrawler = crawler.Crawler(configJson["crawler"])
+        configJson["sheets"] = sheetCrawler.getSheets()
+    print(configJson["sheets"])
+
+    if name == "":
+        name = SelectSheet(configJson['sheets'])
+
+    with open(configJson["sheets"][name], 'rb') as f:
+        data = json.load(f)
+    data["common"].extend(data.get(osName(), []))
 
     #Overwrite global settings with specific sheet settings
     if settings.get("AllowOverwrite", True):
@@ -56,6 +64,6 @@ def LoadSettings(name):
     return finder.Finder(data)
 
 if __name__ == "__main__":
-    finder = LoadSettings("python")
+    finder = LoadSettings("")
     Ui = gui.Gui(finder, settings)
     Ui.run()
