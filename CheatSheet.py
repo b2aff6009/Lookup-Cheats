@@ -5,10 +5,15 @@ import fuzzyfinder #Used as backend search tool for searchbar
 import keyboard #used for toggle shortcut
 import platform #for platform check (keyboard need root on unix)
 import os #needed for user id check
+import psutil
 import threading
  
-SettingsPath = "CheatSheets.json"
+SettingsPath = "configuration.json"
 settings = {}
+
+def getProcessName():
+    p = psutil.Process(os.getpid())
+    return p.name()
 
 class FinderCs:
     def __init__(self, key, data, isSheetSelector = False):
@@ -69,8 +74,9 @@ class GuiEntry:
         if(root.widgetName == "listbox"):
             root.insert(END,  entry)
             return
-        self.frame = Frame(root, bg=bgColors[2], bd=2, relief=SOLID)
-        #self.frame = Frame(root, width=x, bg=bgColors[2], bd=5)
+        #TODO
+        #self.frame = Frame(root, bg=bgColors[2], bd=2, relief=SOLID)
+        self.frame = Frame(root, width=x, bg=bgColors[2], bd=5)
         self.cells = []
 
         colWidth  = int(x/len(self.entry))
@@ -174,7 +180,7 @@ class Gui:
         self.root.config(bg="white")
 
         # Gets the requested values of the height and widht.
-        # Set window positon, widdth and heigt
+        # Set window positon, width and heigth
         position = settings.get("position", [0.25, 0.25])
         self.windowWidth = int(self.root.winfo_screenwidth()*(1-2*position[0]))
         self.windowHeight = int(self.root.winfo_screenheight()*(1-position[1]))
@@ -185,13 +191,17 @@ class Gui:
         if platform.system() != "Linux":
             self.root.geometry("{}x{}".format(self.windowWidth, self.windowHeight))
         self.root.geometry("+{}+{}".format(self.positionX, self.positionY))
-        #self.root.grid_columnconfigure(0, minsize=self.windowWidth)
+        self.root.grid_columnconfigure(0, minsize=self.windowWidth)
         self.root.wm_attributes("-topmost", True)
 
         if platform.system() == "Windows": 
             self.root.wm_attributes("-transparentcolor", "white")
             self.root.overrideredirect(True)
+        elif platform.system() == "Linux":
+            self.root.wm_attributes('-type', 'splash')
+            self.root.wait_visibility(self.root)
         else:
+            self.root.overrideredirect(True)
             self.root.attributes('-type', 'normal')
             self.root.wait_visibility(self.root)
         self.root.attributes('-alpha', settings.get("opacity", 1))
@@ -256,7 +266,7 @@ def LoadSettings(name):
     with open(SettingsPath, 'rb') as f:
         configJson = json.load(f)
     settings = configJson["settings"]
-
+    print(getProcessName())
     if  name == "":
         selector = FinderCs("sheets", configJson, True)
         selectGui = Gui(selector, True)
@@ -276,6 +286,6 @@ def LoadSettings(name):
     return FinderCs(name, data)
 
 if __name__ == "__main__":
-    finder = LoadSettings("")
+    finder = LoadSettings("vim")
     Ui = Gui(finder)
     Ui.run()
