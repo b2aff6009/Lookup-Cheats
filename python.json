@@ -13,7 +13,12 @@
         "Description",
         "Example"
     ],
-    "python": [
+    "Linux" : [
+    ],
+    "Mac" : [],
+    "Windows" : [
+    ],
+    "common": [
         [["if", "else"], "Executes following indented code if statment is true.", "if i == 0:"],
         [["loop",  "for"], "Executes indented code from j to n.", "for i in range(j, n):"],
         [["loop",  "for"], "Executes indented code from each element in container.", "for item in container:"]

@@ -6,10 +6,10 @@ class Finder:
         if isSheetSelector:
             self.entrys = []
             self.order = ["name", "path"]
-            for i, entry in enumerate(data["data"]):
-                self.entrys.append({"name": entry, "id": i, "tosearch" : entry + data["data"][entry], "path": data["data"][entry]})
+            for i, entry in enumerate(data["common"]):
+                self.entrys.append({"name": entry, "id": i, "tosearch" : entry + data["common"][entry], "path": data["common"][entry]})
         else:
-            self.entrys = data["data"]
+            self.entrys = data["common"]
             self.order = data["visible"]
             for i,entry in enumerate(self.entrys):
                 entry["tosearch"] = self.createSearchEntry(entry.values())

@@ -14,7 +14,10 @@
         "Shortcut",
         "Description"
     ],
-    "vim": [
+    "Linux" : [],
+    "Mac" : [],
+    "Windows" : [],
+    "common": [
         [":help keyword", "open help for keyword", ["Global"]],
         [":saveas file", "save file as", ["Global"]],
         [":close", "close current pane", ["Global"]],

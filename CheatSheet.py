@@ -1,6 +1,7 @@
 import json 
 import os #needed for user id check
 import psutil
+import platform
 
 import finder
 import gui
@@ -8,21 +9,25 @@ import gui
 SettingsPath = "configuration.json"
 settings = {}
 
+def osName():
+    Names = {"Windows" : "Windows", "Linux" : "Linux", "darwin" : "Mac"}
+    return Names[platform.system()]
+
 def getProcessName():
     p = psutil.Process(os.getpid())
     return p.name()
 
-def parseShortSheet(cheatSheet, valueKey):
+def parseShortSheet(cheatSheet):
     keyList = cheatSheet["entry"]
-    valueList = cheatSheet[valueKey]
+    valueList = cheatSheet["common"]
     data = {}
     data["visible"] = cheatSheet["visible"]
-    data[valueKey] = []
+    data["common"] = []
     for value in valueList:
         entry = {}
         for i,key in enumerate(keyList,0):
             entry[key] = value[i]
-        data[valueKey].append(entry)
+        data["common"].append(entry)
     return data
 
 def LoadSettings(name):
@@ -39,6 +44,7 @@ def LoadSettings(name):
     else:
         with open(configJson["sheets"][name], 'rb') as f:
             data = json.load(f)
+        data["common"].extend(data.get(osName(), []))
 
     #Overwrite global settings with specific sheet settings
     if settings.get("AllowOverwrite", True):
