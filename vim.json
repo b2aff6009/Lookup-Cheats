@@ -2,7 +2,8 @@
     "settings" : {
         "HeadlineFont" : "Helvetica 20 bold",
         "shortSheet" : true,
-        "multiLineEntry" : false
+        "multiLineEntry" : false,
+        "bgColors" : ["Blue1", "Blue2", "Blue3"]
     },
     "entry" : [
         "Shortcut",
@@ -13,7 +14,7 @@
         "Shortcut",
         "Description"
     ],
-    "vim2": [
+    "vim": [
         [":help keyword", "open help for keyword", ["Global"]],
         [":saveas file", "save file as", ["Global"]],
         [":close", "close current pane", ["Global"]],

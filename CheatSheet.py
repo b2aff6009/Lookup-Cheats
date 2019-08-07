@@ -68,7 +68,7 @@ class ListEntry:
 
 class GuiEntry:
     def __init__(self, entry, isHeadline, root, x, mRow = 0, mCol=0):
-        bgColors = ["SkyBlue1", "SkyBlue2", "SkyBlue3"]
+        bgColors = settings.get("bgColors", ["SkyBlue1", "SkyBlue2", "SkyBlue3"])
         self.entry = entry
         self.isHeadline = isHeadline
         if(root.widgetName == "listbox"):
@@ -76,7 +76,7 @@ class GuiEntry:
             return
         #TODO
         #self.frame = Frame(root, bg=bgColors[2], bd=2, relief=SOLID)
-        self.frame = Frame(root, width=x, bg=bgColors[2], bd=5)
+        self.frame = Frame(root, width=x, bg=bgColors[2], bd=2)
         self.cells = []
 
         colWidth  = int(x/len(self.entry))
@@ -93,8 +93,6 @@ class GuiEntry:
         self.frame.pack(fill=X)
 
     def __del__(self):
-        if settings.get("Debug", False):
-            print("Called del")
         self.frame.destroy()
 
 
@@ -163,6 +161,7 @@ class Gui:
         self.mainFrame.activate(newSelection)
 
     def toggle(self):
+        print(getProcessName())
         self.root.update()
         if self.vis == True:
             self.root.withdraw()
@@ -170,7 +169,10 @@ class Gui:
         else:
             self.root.deiconify()
             self.root.focus_force()
-            self.searchBar.focus()
+            if platform.system() == "Linux":
+                self.searchBar.focus_force() #TODO check if needed on mac/win
+            else:
+                self.searchBar.focus_set()
             self.vis = True
 
 
@@ -194,6 +196,7 @@ class Gui:
         self.root.grid_columnconfigure(0, minsize=self.windowWidth)
         self.root.wm_attributes("-topmost", True)
 
+        #OS specific window settings
         if platform.system() == "Windows": 
             self.root.wm_attributes("-transparentcolor", "white")
             self.root.overrideredirect(True)
@@ -206,15 +209,16 @@ class Gui:
             self.root.wait_visibility(self.root)
         self.root.attributes('-alpha', settings.get("opacity", 1))
 
-
     def createSearchBar(self, root, x, y, mRow = 0, mCol = 0):
+        '''Create the top line of the window including the text edit where the text to search comes from.'''
         self.searchFrame = Frame(self.root, bg="white", height=y)
-        #self.searchFrame = Frame(self.root, bg="white", width=x, height=y)
-        #self.searchFrame.grid_columnconfigure(0, minsize=int(x))
         self.searchFrame.grid(row=mRow, column=mCol)
         self.searchBar = Entry(self.searchFrame, bg="grey", justify=CENTER)
         self.searchBar.bind("<KeyRelease>", self.update)
-        self.searchBar.focus_set()
+        if platform.system() == "Linux":
+            self.searchBar.focus_force() #TODO check if needed on mac/win
+        else:
+            self.searchBar.focus_set()
         self.searchBar.grid()
         return self.searchBar
 
@@ -286,6 +290,6 @@ def LoadSettings(name):
     return FinderCs(name, data)
 
 if __name__ == "__main__":
-    finder = LoadSettings("vim")
+    finder = LoadSettings("python")
     Ui = Gui(finder)
     Ui.run()
