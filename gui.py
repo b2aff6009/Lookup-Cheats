@@ -1,5 +1,17 @@
+import pip
+
+def install(package):
+    if hasattr(pip, 'main'):
+        pip.main(['install', package])
+    else:
+        pip._internal.main(['install', package])
+
+try:
+    import keyboard #used for toggle shortcut
+except ImportError, e:
+    install("keyboard")
+
 from tkinter import * #used for the user interface
-import keyboard #used for toggle shortcut
 import platform #for platform check (keyboard need root on unix)
 import os #needed for user id check
 import threading

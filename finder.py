@@ -1,4 +1,16 @@
-import fuzzyfinder #Used as backend search tool for searchbar
+import pip
+
+def install(package):
+    if hasattr(pip, 'main'):
+        pip.main(['install', package])
+    else:
+        pip._internal.main(['install', package])
+
+try:
+    import fuzzyfinder #Used as backend search tool for searchbar
+except ImportError, e:
+    install("fuzzyfinder")
+
 
 class Finder:
     def __init__(self, data, isSheetSelector = False):
