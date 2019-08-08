@@ -32,12 +32,30 @@ def parseShortSheet(cheatSheet):
         data["common"].append(entry)
     return data
 
-def SelectSheet(sheets):
+def GetSheets(config):
+    if (config["crawler"]["use"] == True):
+        sheetCrawler = crawler.Crawler(config["crawler"])
+        config["sheets"] = sheetCrawler.getSheets()
+    return config["sheets"]
+
+def SelectSheet(config, name=""):
+    sheets = GetSheets(config)
+    if name == "":
+        name = settings["defaultSheet"]
+    if name == "" or name not in config['sheets']:
+        selector = finder.createFinder(settings["finder"], sheets, True)
+        selectGui = gui.Gui(selector, settings,  True)
+        selectGui.run()
+        name = selectGui.sheet
+    return selectGui.sheet
+
+'''def SelectSheet(sheets):
     global settings
     selector = finder.createFinder(settings.get("finder", ""), sheets, True)
     selectGui = gui.Gui(selector, settings,  True)
     selectGui.run()
-    return selectGui.sheet
+    return selectGui.sheet'''
+
 
 def setDefault(data, key, val):
     data[key] = data.get(key, val)
@@ -58,6 +76,7 @@ def SetDefaultSettings(config):
     setDefault(config["settings"], "defaultSheet", "")
     setDefault(config["settings"], "AllowOverwrite", True)
     setDefault(config["settings"], "shortSheet", False)
+    setDefault(config["settings"], "finder", "normal")
 
     #Settings used by Gui
     setDefault(config["settings"], "bgColors", ["SkyBlue1", "SkyBlue2", "SkyBlue3"])
@@ -73,8 +92,7 @@ def SetDefaultSettings(config):
     setDefault(config["settings"], "selectionDown",'<Down>')
     setDefault(config["settings"], "Debug", False)
 
-
-def LoadSettings(name):
+def LoadConfig(name):
     global settings
     with open(SettingsPath, 'rb') as f:
         configJson = json.load(f)
@@ -83,11 +101,7 @@ def LoadSettings(name):
     if settings["Debug"]:
         print(configJson)
 
-    if (configJson["crawler"]["use"] == True):
-        sheetCrawler = crawler.Crawler(configJson["crawler"])
-        configJson["sheets"] = sheetCrawler.getSheets()
-    if settings.get("Debug", False) == True:
-        print(configJson["sheets"])
+    return configJson, settings
 
     if name == "":
         name = settings["defaultSheet"]
@@ -105,12 +119,32 @@ def LoadSettings(name):
 
     if (settings["shortSheet"]):
         data = parseShortSheet(data)
-    return finder.createFinder(settings.get("finder", ""), data)
+    return finder.createFinder(settings["finder"], data)
+
+def LoadSheet(name, config, settings):
+    with open(config["sheets"][name], 'rb') as f:
+        data = json.load(f)
+    data["common"].extend(data.get(osName(), []))
+
+    #Overwrite global settings with specific sheet settings
+    if settings["AllowOverwrite"]:
+        for key in data["settings"] :
+            settings[key] = data["settings"][key]
+
+    if (settings["shortSheet"]):
+        data = parseShortSheet(data)
+    return data
+
+def GetFinder(sheet):
+    return finder.createFinder(settings["finder"], data)
 
 if __name__ == "__main__":
-    finder = LoadSettings("")
+    config, settings= LoadConfig("")
+    sheetName = SelectSheet(config)
+    sheet = LoadSheet(sheetName, config, settings)
+    mFinder = finder.createFinder(settings["finder"], sheet)
 
-    if settings.get("Debug", False) == True:
-        print("Finder typ: {}".format(finder.__class__))
-    Ui = gui.Gui(finder, settings)
+    if settings["Debug"] == True:
+        print("Finder typ: {}".format(mFinder.__class__))
+    Ui = gui.Gui(mFinder, settings)
     Ui.run()
