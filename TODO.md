@@ -15,14 +15,17 @@
     ### Crawler
         - ~~Implement a crawler~~
         - ~~search for csh files in given directoies (dir's from settings)~~
+        - Enable the crawler to search in git repos.
     ### Gui
         - Add a better multi screen support
         - Check if Gui works on all three platform (Linux: done, Windows: <>, Mac: <>)
         - Add a way to jump back to sheetSelector
+        - Add support for icons instead of string in "shortcut" coloumn
     ### Finder
         - ~~Add an alternative fuzzyfinder~~
         - ~~select finder via settings~~
     ### Settings
+        - implement an exit key
         - add "autoselect" sheet if possible (via processName)
         - ~~add a "default" sheet to the settings~~
         - Create a userinterface for handle the settings

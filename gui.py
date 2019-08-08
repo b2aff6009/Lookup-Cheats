@@ -1,5 +1,4 @@
-import pip
-
+'''import pip
 def install(package):
     if hasattr(pip, 'main'):
         pip.main(['install', package])
@@ -9,8 +8,9 @@ def install(package):
 try:
     import keyboard #used for toggle shortcut
 except ImportError as e:
-    install("keyboard")
+    install("keyboard")'''
 
+import keyboard #used for toggle shortcut
 from tkinter import * #used for the user interface
 import platform #for platform check (keyboard need root on unix)
 import os #needed for user id check

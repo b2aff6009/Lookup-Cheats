@@ -1,5 +1,4 @@
-import pip
-
+'''import pip
 def install(package):
     if hasattr(pip, 'main'):
         pip.main(['install', package])
@@ -9,7 +8,8 @@ def install(package):
 try:
     import fuzzyfinder #Used as backend search tool for searchbar
 except ImportError as e:
-    install("fuzzyfinder")
+    install("fuzzyfinder")'''
+import fuzzyfinder #Used as backend search tool for searchbar
 
 def createFinder(name, data, isSheetSelector = False):
     selector = {"fuzzy" : FuzzyFinder, "normal": StandardFinder}

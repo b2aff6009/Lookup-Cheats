@@ -18,7 +18,6 @@ class Crawler:
                 if (filename.endswith(self.settings["extension"])):
                     filepath = os.path.join(subdir, filename)
                     self.sheets[filename.replace(self.settings["extension"],"")] = os.path.join(subdir, filename)
-                    #result.append([filename.replace(self.settings["extension"],""), os.path.join(subdir, filename)])
             if self.settings["recrusive"] == False:
                 break
         return result
