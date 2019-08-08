@@ -8,7 +8,7 @@ def install(package):
 
 try:
     import fuzzyfinder #Used as backend search tool for searchbar
-except ImportError, e:
+except ImportError as e:
     install("fuzzyfinder")
 
 

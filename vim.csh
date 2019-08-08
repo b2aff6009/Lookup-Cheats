@@ -2,8 +2,7 @@
     "settings" : {
         "HeadlineFont" : "Helvetica 20 bold",
         "shortSheet" : true,
-        "multiLineEntry" : false,
-        "bgColors" : ["Blue1", "Blue2", "Blue3"]
+        "multiLineEntry" : false
     },
     "entry" : [
         "Shortcut",

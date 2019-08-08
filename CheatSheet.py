@@ -43,12 +43,15 @@ def LoadSettings(name):
     with open(SettingsPath, 'rb') as f:
         configJson = json.load(f)
     settings = configJson["settings"]
+
     if (configJson.get("crawler", {}).get("use", False) == True):
         sheetCrawler = crawler.Crawler(configJson["crawler"])
         configJson["sheets"] = sheetCrawler.getSheets()
     print(configJson["sheets"])
 
     if name == "":
+        name = settings.get("defaultSheet", "")
+    if name == "" or name not in configJson['sheets']:
         name = SelectSheet(configJson['sheets'])
 
     with open(configJson["sheets"][name], 'rb') as f:

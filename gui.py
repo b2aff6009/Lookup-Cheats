@@ -8,7 +8,7 @@ def install(package):
 
 try:
     import keyboard #used for toggle shortcut
-except ImportError, e:
+except ImportError as e:
     install("keyboard")
 
 from tkinter import * #used for the user interface

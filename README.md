@@ -16,3 +16,14 @@ Cheater should help people to be more productive with tools they don’t know we
 sudo apt-get install python3 python-tk
 pip install fuzzyfinder keyboard
 ```
+
+### Install on windows
+    1. Get Python3 from www.python.org/downloads/
+    1.1 Install python and pip (I recommend to check the box to add python 3.X to the PATH variable)
+    2. get cheater repository
+    3. Install packages
+    '''
+    install fuzzyfinder
+    install psutil
+    install keyboard
+    '''
