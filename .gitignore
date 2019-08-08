@@ -1,0 +1,8 @@
+*.pyc
+*.spec
+*.swp
+dist/
+build/
+output/
+tmp/
+*.vim
