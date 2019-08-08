@@ -19,7 +19,7 @@ import threading
 class GuiEntry:
     '''GuiEntrys represent the data blocks in the cheatsheet, including the style'''
     def __init__(self, entry, isHeadline, root, settings, x, mRow = 0, mCol=0):
-        bgColors = settings.get("bgColors", ["SkyBlue1", "SkyBlue2", "SkyBlue3"])
+        bgColors = settings["bgColors"]
         self.entry = entry
         self.isHeadline = isHeadline
         if(root.widgetName == "listbox"):
@@ -31,13 +31,13 @@ class GuiEntry:
         self.cells = []
 
         colWidth  = int(x/len(self.entry))
-        labelFont = settings.get("HeadlineFont", 'Helvetica 15 bold') if isHeadline else settings.get("Font", 'Helvetica 11')
+        labelFont = settings["HeadlineFont"] if isHeadline else settings["Font"]
         for colNr, colEntry in enumerate(self.entry):
             self.frame.grid_columnconfigure(colNr, minsize=colWidth)
             bgColor = bgColors[2] if isHeadline else bgColors[colNr%2]
             self.cells.append(Label(self.frame, text=colEntry, bg=bgColor, bd = 1, anchor=W, font=labelFont))
 
-            if settings.get("multiLineEntry", False):
+            if settings["multiLineEntry"]:
                 self.cells[-1].grid(column=0, row=colNr, sticky=E+W)
             else:
                 self.cells[-1].grid(column=colNr, row=0, sticky=E+W)
@@ -74,22 +74,22 @@ class Gui:
         self.createMainWindow()
         self.createSearchBar(self.root, self.windowWidth, int(self.windowHeight/10), 0)
 
-        self.frameWidth = self.windowWidth/self.settings.get("columns",1)
+        self.frameWidth = self.windowWidth/self.settings["columns"]
         self.mainFrame = Frame(self.root, width=self.windowWidth, height=int(9*self.windowHeight/10) , bg="white")
         self.mainFrame.grid(row=1)
 
         if isSheetSelector:
             self.mainFrame = Listbox(self.mainFrame, selectmode=SINGLE)
             self.mainFrame.pack()
-            self.root.bind(self.settings.get("selectKey",'<Return>'), self.execute)
-            self.root.bind(self.settings.get("selectionUp",'<Up>'), self.changeSelection)
-            self.root.bind(self.settings.get("selectionDown",'<Down>'), self.changeSelection)
+            self.root.bind(self.settings["selectKey"], self.execute)
+            self.root.bind(self.settings["selectionUp"], self.changeSelection)
+            self.root.bind(self.settings["selectionDown"], self.changeSelection)
         else:
-            colNr = self.settings.get("columns", 1)
+            colNr = self.settings["columns"]
             for i in range(0, colNr):
                 self.mainFrames.append(Frame(self.mainFrame, width=self.frameWidth, height=int(9*self.windowHeight/10) , bg="white"))
                 self.mainFrames[-1].grid(row = 1, column=i)
-                if not self.settings.get("multiLineEntry", False):
+                if not self.settings["multiLineEntry"]:
                     self.headlines.append(GuiEntry(self.finder.order, True, self.mainFrames[-1], self.settings, self.frameWidth))
 
         self.root.grid()
@@ -102,7 +102,7 @@ class Gui:
 
         if ("shortcut" in self.settings.keys()):
             if platform.system() == "Windows" or os.getuid() == 0: 
-                if self.settings.get("Debug", False):
+                if self.settings["Debug"]:
                     print("Shortcut set to: " + self.settings["shortcut"])
                 keyboard.add_hotkey(self.settings["shortcut"], self.toggle)
             else:
@@ -112,15 +112,15 @@ class Gui:
     def execute(self, event):
         for i, key in enumerate(self.visbleDict.keys()):
             if i == self.mainFrame.curselection()[0]:
-                if self.settings.get("Debug", False):
+                if self.settings["Debug"]:
                     print(self.visbleDict[key].entry)
                 self.sheet = self.visbleDict[key].entry[0]
                 self.root.destroy()
 
     def changeSelection(self, event):
-        if(self.settings.get("selectionUp",'<Up>') == ("<" + event.keysym + ">")):
+        if(self.settings["selectionUp"] == ("<" + event.keysym + ">")):
                 direction = -1
-        elif(self.settings.get("selectionDown",'<Down>') == ("<" + event.keysym + ">")):
+        elif(self.settings["selectionDown"] == ("<" + event.keysym + ">")):
                 direction = 1
         newSelection = self.mainFrame.curselection()[0] + direction
         self.mainFrame.select_clear(0,END)
@@ -150,7 +150,7 @@ class Gui:
 
         # Gets the requested values of the height and widht.
         # Set window positon, width and heigth
-        position = self.settings.get("position", [0.25, 0.25])
+        position = self.settings["position"]
         self.windowWidth = int(self.root.winfo_screenwidth()*(1-2*position[0]))
         self.windowHeight = int(self.root.winfo_screenheight()*(1-position[1]))
         self.positionX = int(position[0]*self.root.winfo_screenwidth())
@@ -174,7 +174,7 @@ class Gui:
             self.root.overrideredirect(True)
             self.root.attributes('-type', 'normal')
             self.root.wait_visibility(self.root)
-        self.root.attributes('-alpha', self.settings.get("opacity", 1))
+        self.root.attributes('-alpha', self.settings["opacity"])
 
     def createSearchBar(self, root, x, y, mRow = 0, mCol = 0):
         '''Create the top line of the window including the text edit where the text to search comes from.'''
@@ -197,7 +197,7 @@ class Gui:
     def updateGui(self):
         hits = self.finder.find(self.searchBar.get())
 
-        if self.settings.get("columns", 1) > 1 and self.mainFrame.widgetName == "frame":
+        if self.settings["columns"] > 1 and self.mainFrame.widgetName == "frame":
             for key in self.visbleDict.keys():
                 del self.visbleDict[key]
         
@@ -206,11 +206,11 @@ class Gui:
                 del self.visbleDict[eId] 
 
         for eId in hits.keys():
-            if len(self.visbleDict) >= self.settings.get("maxEntrys", 30):
+            if len(self.visbleDict) >= self.settings["maxEntrys"]:
                 break;
             if eId not in self.visbleDict.keys():
                 if (self.mainFrame.widgetName == "frame"):
-                    frame = self.mainFrames[len(self.visbleDict.keys())%self.settings.get("columns",1)]
+                    frame = self.mainFrames[len(self.visbleDict.keys())%self.settings["columns"]]
                     self.visbleDict[eId] = GuiEntry(hits[eId], False, frame, self.settings, self.frameWidth)
                 else:
                     self.visbleDict[eId] = ListEntry(hits[eId], eId, self.mainFrame)

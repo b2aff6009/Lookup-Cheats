@@ -15,8 +15,8 @@
     },
     "crawler" : {
         "use" : true,
-        "recrusive" : false,
         "extension" : ".csh",
+        "recrusive" : false,
         "directories" : [
             "./"
         ]

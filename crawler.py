@@ -6,7 +6,7 @@ class Crawler:
         self.sheets = {}
 
     def getSheets(self):
-        for path in self.settings.get("directories", []):
+        for path in self.settings["directories"]:
             self.searchFiles(path)
         return self.sheets
 
