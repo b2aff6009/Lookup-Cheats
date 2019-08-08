@@ -20,8 +20,8 @@
         - Check if Gui works on all three platform (Linux: done, Windows: <>, Mac: <>)
         - Add a way to jump back to sheetSelector
     ### Finder
-        - Add an alternative fuzzyfinder
-        - select finder via settings
+        - ~~Add an alternative fuzzyfinder~~
+        - ~~select finder via settings~~
     ### Settings
         - add "autoselect" sheet if possible (via processName)
         - ~~add a "default" sheet to the settings~~

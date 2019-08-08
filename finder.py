@@ -11,6 +11,10 @@ try:
 except ImportError as e:
     install("fuzzyfinder")
 
+def createFinder(name, data, isSheetSelector = False):
+    selector = {"fuzzy" : FuzzyFinder, "normal": StandardFinder}
+    return selector.get(name, StandardFinder)(data, isSheetSelector)
+
 
 class Finder:
     def __init__(self, data, isSheetSelector = False):
@@ -35,7 +39,7 @@ class Finder:
             'dict' : lambda cell : "Dict is not yet supported",
             'list' : lambda cell : " ".join([useConverter(entry) for entry in cell])
         }
-        tosearch = "".join([useConverter(cell) for cell in entry])
+        tosearch = " ".join([useConverter(cell) for cell in entry])
         return tosearch
 
     def orderResults(self, unorderd):
@@ -44,10 +48,23 @@ class Finder:
             results[entry["id"]] = [entry[step] for step in self.order]
         return results
 
+class FuzzyFinder(Finder):
     def find(self, text):
         results = self.orderResults(list(fuzzyfinder.fuzzyfinder(text, self.entrys, accessor=lambda x: x["tosearch"])))
         return results
 
+
+class StandardFinder(Finder):
+    def getMatches(self, text):
+        results = []
+        for entry in self.entrys:
+            if text in entry["tosearch"]:
+                results.append(entry)
+        return results
+
+    def find(self, text):
+        results = self.orderResults(self.getMatches(text))
+        return results
 
 if __name__ == '__main__':
     SettingsPath = "configuration.json"
@@ -57,5 +74,20 @@ if __name__ == '__main__':
 
     with open(SettingsPath, 'rb') as f:
         configJson = json.load(f)
-    sheetSelector = Finder(configJson["sheets"], True)
+    sheetSelector = createFinder("normal",configJson["sheets"], True)
+    print(sheetSelector.__class__)
     print(sheetSelector.find(""))
+
+
+    data = {"common": [
+            {"id": 0, "tosearch": "This is a test entry"},
+            {"id": 1, "tosearch": "This is a test entry"},
+            {"id": 2, "tosearch": "This is a test entry"},
+            {"id": 3, "tosearch": "Have some different texts"},
+            {"id": 4, "tosearch": "But This must be included"}
+            ],
+            "visible": ["tosearch"]}
+    finder = createFinder("normal", data)
+    print(finder.find("This"))
+
+

@@ -2,7 +2,8 @@
     "settings" : {
         "HeadlineFont" : "Helvetica 20 bold",
         "shortSheet" : true,
-        "multiLineEntry" : false
+        "multiLineEntry" : false,
+        "finder" : "fuzzy"
     },
     "entry" : [
         "Shortcut",

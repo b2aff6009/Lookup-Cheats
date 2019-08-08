@@ -33,7 +33,8 @@ def parseShortSheet(cheatSheet):
     return data
 
 def SelectSheet(sheets):
-    selector = finder.Finder(sheets, True)
+    global settings
+    selector = finder.createFinder(settings.get("finder", ""), sheets, True)
     selectGui = gui.Gui(selector, settings,  True)
     selectGui.run()
     return selectGui.sheet
@@ -47,7 +48,8 @@ def LoadSettings(name):
     if (configJson.get("crawler", {}).get("use", False) == True):
         sheetCrawler = crawler.Crawler(configJson["crawler"])
         configJson["sheets"] = sheetCrawler.getSheets()
-    print(configJson["sheets"])
+    if settings.get("Debug", False) == True:
+        print(configJson["sheets"])
 
     if name == "":
         name = settings.get("defaultSheet", "")
@@ -65,9 +67,11 @@ def LoadSettings(name):
 
     if (settings.get("shortSheet", False)):
         data = parseShortSheet(data)
-    return finder.Finder(data)
+    return finder.createFinder(settings.get("finder", ""), data)
 
 if __name__ == "__main__":
     finder = LoadSettings("")
+    if settings.get("Debug", False) == True:
+        print("Finder typ: {}".format(finder.__class__))
     Ui = gui.Gui(finder, settings)
     Ui.run()
