@@ -97,7 +97,8 @@ class Gui:
         self.worker = threading.Thread()
 
         if ("cleanKey" in self.settings.keys()):
-            self.root.bind(self.settings["cleanKey"], lambda x: self.searchBar.delete(0, 'end'))
+            self.root.bind(self.settings["cleanKey"], lambda x: self.searchBar.delete(0, 'end'))        
+        #self.root.bind(self.settings["backKey"], del self)
 
 
         if ("shortcut" in self.settings.keys()):
@@ -107,6 +108,7 @@ class Gui:
                 keyboard.add_hotkey(self.settings["shortcut"], self.toggle)
             else:
                 print("Shortcut assignment need root priviliges on Unix! No toggle Key assigned.")
+
 
 
     def execute(self, event):
@@ -156,6 +158,9 @@ class Gui:
         self.positionX = int(position[0]*self.root.winfo_screenwidth())
         self.positionY = int(position[1]*self.root.winfo_screenheight())
 
+        if (self.settings["Debug"] == True):
+            print("W: {} H: {}".format(self.root.winfo_screenwidth(), self.root.winfo_screenheight()))
+            print("X: {} Y: {} Height: {} Width: {}".format(self.positionX, self.positionY, self.windowHeight, self.windowWidth))
         # Positions the window in the center of the page.
         if platform.system() != "Linux":
             self.root.geometry("{}x{}".format(self.windowWidth, self.windowHeight))
@@ -172,7 +177,7 @@ class Gui:
             self.root.wait_visibility(self.root)
         else:
             self.root.overrideredirect(True)
-            self.root.attributes('-type', 'normal')
+            self.root.attributes('-topmost')
             self.root.wait_visibility(self.root)
         self.root.attributes('-alpha', self.settings["opacity"])
 
@@ -182,6 +187,7 @@ class Gui:
         self.searchFrame.grid(row=mRow, column=mCol)
         self.searchBar = Entry(self.searchFrame, bg="grey", justify=CENTER)
         self.searchBar.bind("<KeyRelease>", self.update)
+
         if platform.system() == "Linux":
             self.searchBar.focus_force() #TODO check if needed on mac/win
         else:

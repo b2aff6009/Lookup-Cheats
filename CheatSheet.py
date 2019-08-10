@@ -12,7 +12,7 @@ SettingsPath = "configuration.json"
 settings = {}
 
 def osName():
-    Names = {"Windows" : "Windows", "Linux" : "Linux", "darwin" : "Mac"}
+    Names = {"Windows" : "Windows", "Linux" : "Linux", "Darwin" : "Mac"}
     return Names[platform.system()]
 
 def getProcessName():
@@ -49,14 +49,6 @@ def SelectSheet(config, name=""):
         name = selectGui.sheet
     return selectGui.sheet
 
-'''def SelectSheet(sheets):
-    global settings
-    selector = finder.createFinder(settings.get("finder", ""), sheets, True)
-    selectGui = gui.Gui(selector, settings,  True)
-    selectGui.run()
-    return selectGui.sheet'''
-
-
 def setDefault(data, key, val):
     data[key] = data.get(key, val)
 
@@ -90,6 +82,8 @@ def SetDefaultSettings(config):
     setDefault(config["settings"], "maxEntrys", 30)
     setDefault(config["settings"], "selectionUp",'<Up>')
     setDefault(config["settings"], "selectionDown",'<Down>')
+    setDefault(config["settings"], "backKey",'<Ctrl-Escape>')
+    setDefault(config["settings"], "cleanKey",'<Escape>')
     setDefault(config["settings"], "Debug", False)
 
 def LoadConfig(name):
