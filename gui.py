@@ -161,24 +161,22 @@ class Gui:
         if (self.settings["Debug"] == True):
             print("W: {} H: {}".format(self.root.winfo_screenwidth(), self.root.winfo_screenheight()))
             print("X: {} Y: {} Height: {} Width: {}".format(self.positionX, self.positionY, self.windowHeight, self.windowWidth))
-        # Positions the window in the center of the page.
-        if platform.system() != "Linux":
-            self.root.geometry("{}x{}".format(self.windowWidth, self.windowHeight))
-        self.root.geometry("+{}+{}".format(self.positionX, self.positionY))
-        self.root.grid_columnconfigure(0, minsize=self.windowWidth)
-        self.root.wm_attributes("-topmost", True)
 
         #OS specific window self.settings
         if platform.system() == "Windows": 
             self.root.wm_attributes("-transparentcolor", "white")
             self.root.overrideredirect(True)
         elif platform.system() == "Linux":
+            self.root.geometry("{}x{}".format(self.windowWidth, self.windowHeight))
             self.root.wm_attributes('-type', 'splash')
             self.root.wait_visibility(self.root)
         else:
-            self.root.overrideredirect(True)
-            self.root.attributes('-topmost')
             self.root.wait_visibility(self.root)
+
+        # Positions the window in the center of the page.
+        self.root.geometry("+{}+{}".format(self.positionX, self.positionY))
+        self.root.grid_columnconfigure(0, minsize=self.windowWidth)
+        self.root.wm_attributes("-topmost", True)
         self.root.attributes('-alpha', self.settings["opacity"])
 
     def createSearchBar(self, root, x, y, mRow = 0, mCol = 0):
@@ -203,13 +201,17 @@ class Gui:
     def updateGui(self):
         hits = self.finder.find(self.searchBar.get())
 
+        toDel = set()
         if self.settings["columns"] > 1 and self.mainFrame.widgetName == "frame":
             for key in self.visbleDict.keys():
-                del self.visbleDict[key]
-        
+                toDel.add(key)
+       
         for eId in self.visbleDict.keys():
             if eId not in hits.keys():
-                del self.visbleDict[eId] 
+                toDel.add(eId)
+
+        for key in toDel:
+            del self.visbleDict[key]
 
         for eId in hits.keys():
             if len(self.visbleDict) >= self.settings["maxEntrys"]:
