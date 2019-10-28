@@ -4,6 +4,7 @@
         "shortcut" : "alt+d",
         "bgColors" : ["SkyBlue1", "SkyBlue2", "SkyBlue3"],
         "cleanKey" : "<Escape>",
+        "backKey" : "<Ctrl-Escape>",
         "Debug" : true,
         "opacity" : 0.9,
         "position" : [0.2, 0.2],
