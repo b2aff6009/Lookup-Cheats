@@ -6,3 +6,6 @@ build/
 output/
 tmp/
 *.vim
+.vscode
+*.code-workspace
+.pytest_cache/

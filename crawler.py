@@ -23,13 +23,9 @@ class Crawler:
         return result
 
 if __name__ == '__main__':
-    SettingsPath = "configuration.json"
     settings = {}
-    print("Test crawler")
-    import json
-
-    with open(SettingsPath, 'rb') as f:
-        configJson = json.load(f)
-    settings = configJson["crawler"]
+    settings['recrusive'] = False
+    settings['extension'] = '.csh'
+    settings['directories'] = ['./tests/data/', './tests/data/subdata/']
     crawler = Crawler(settings)
     print(crawler.getSheets())
