@@ -40,7 +40,7 @@ class Finder:
             'list' : lambda cell : " ".join([useConverter(entry) for entry in cell])
         }
         tosearch = " ".join([useConverter(cell) for cell in entry])
-        return tosearch
+        return tosearch.lower()
 
     def orderResults(self, unorderd):
         results = {}
@@ -50,7 +50,7 @@ class Finder:
 
 class FuzzyFinder(Finder):
     def find(self, text):
-        results = self.orderResults(list(fuzzyfinder.fuzzyfinder(text, self.entrys, accessor=lambda x: x["tosearch"])))
+        results = self.orderResults(list(fuzzyfinder.fuzzyfinder(text.lower(), self.entrys, accessor=lambda x: x["tosearch"])))
         return results
 
 
@@ -63,31 +63,5 @@ class StandardFinder(Finder):
         return results
 
     def find(self, text):
-        results = self.orderResults(self.getMatches(text))
+        results = self.orderResults(self.getMatches(text.lower()))
         return results
-
-if __name__ == '__main__':
-    SettingsPath = "configuration.json"
-    settings = {}
-    print("Test finder")
-    import json
-
-    with open(SettingsPath, 'rb') as f:
-        configJson = json.load(f)
-    sheetSelector = createFinder("normal",configJson["sheets"], True)
-    print(sheetSelector.__class__)
-    print(sheetSelector.find(""))
-
-
-    data = {"common": [
-            {"id": 0, "tosearch": "This is a test entry"},
-            {"id": 1, "tosearch": "This is a test entry"},
-            {"id": 2, "tosearch": "This is a test entry"},
-            {"id": 3, "tosearch": "Have some different texts"},
-            {"id": 4, "tosearch": "But This must be included"}
-            ],
-            "visible": ["tosearch"]}
-    finder = createFinder("normal", data)
-    print(finder.find("This"))
-
-
