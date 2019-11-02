@@ -21,11 +21,3 @@ class Crawler:
             if self.settings["recrusive"] == False:
                 break
         return result
-
-if __name__ == '__main__':
-    settings = {}
-    settings['recrusive'] = False
-    settings['extension'] = '.csh'
-    settings['directories'] = ['./tests/data/', './tests/data/subdata/']
-    crawler = Crawler(settings)
-    print(crawler.getSheets())
