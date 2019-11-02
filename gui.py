@@ -204,7 +204,7 @@ class Gui:
         return self.searchBar
 
     def update(self, event = 0):
-        del self.worker
+        del self.worker #TODO find a better solution for stopping the thread.
         self.worker = threading.Thread(target=self.updateGui)
         self.worker.start()
 

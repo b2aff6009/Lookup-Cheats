@@ -1,5 +1,5 @@
 # Description
-Cheater is a tool to read cheatsheets in a specific json format. It provides a search function to find shortcuts and functions of a tool very fast. For being easy to use it will be able to hideable via a shortcut. In the future it should provide a collection of cheatsheets for a wide range of common tools.
+Cheater is a tool to read cheatsheets in a specific json format. It provides a search function to find shortcuts and functions of a tool very fast. For being easy to use it will be hideable via a shortcut. In the future it should provide a collection of cheatsheets for a wide range of common tools.
 Regarding to it’s settings it should always be able to it up to be useful.
 
 ## Goal of Cheater
@@ -13,17 +13,17 @@ Cheater should help people to be more productive with tools they don’t know we
 
 ### Linux
 ```
-sudo apt-get install python3 python-tk
-pip install fuzzyfinder keyboard
+sudo apt-get install python3 python3-pip python-tk
+pip3 install fuzzyfinder keyboard
 ```
 
 ### Install on windows
-    1. Get Python3 from www.python.org/downloads/
-    1.1 Install python and pip (I recommend to check the box to add python 3.X to the PATH variable)
-    2. get cheater repository
-    3. Install packages
-    '''
-    install fuzzyfinder
-    install psutil
-    install keyboard
-    '''
+1. Get Python3 from www.python.org/downloads/
+2. Install python and pip (I recommend to check the box to add python 3.X to the PATH variable)
+3. get cheater repository
+4. Install packages
+```
+install fuzzyfinder
+install psutil
+install keyboard
+```

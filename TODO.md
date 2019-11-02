@@ -24,8 +24,8 @@
 - Add a way to jump back to sheetSelector
 - Add support for icons instead of string in "shortcut" coloumn
 - Improve the update performance
-  - Hide instead of delete
-  - Hide/Delete item only if it is not part of the new results
+  - ~~Hide instead of delete~~
+  - ~~Hide/Delete item only if it is not part of the new results~~
  
 ### Finder
 - ~~Add an alternative fuzzyfinder~~
@@ -39,6 +39,12 @@
 - ~~add a "default" sheet to the settings~~
 
 ## Misc
+
+### Known issues
+- stop worker thread in gui is dirty
+- "splash" doesn't work on mac
+- reorder of data doesn't work with new gui update
+- Cheater doesn't support multi screens.
 
 ### Add tests
 - ~~Crawler~~
