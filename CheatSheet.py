@@ -129,9 +129,6 @@ def LoadSheet(name, config, settings):
         data = parseShortSheet(data)
     return data
 
-def GetFinder(sheet):
-    return finder.createFinder(settings["finder"], data)
-
 if __name__ == "__main__":
     config, settings= LoadConfig("")
     sheetName = SelectSheet(config)
