@@ -22,10 +22,6 @@ class GuiEntry:
         bgColors = settings["bgColors"]
         self.entry = entry
         self.isHeadline = isHeadline
-        if(root.widgetName == "listbox"):
-            root.insert(END,  entry)
-            return
-        #TODO
         #self.frame = Frame(root, bg=bgColors[2], bd=2, relief=SOLID)
         self.frame = Frame(root, width=x, bg=bgColors[2], bd=2)
         self.cells = []
@@ -35,7 +31,7 @@ class GuiEntry:
         for colNr, colEntry in enumerate(self.entry):
             self.frame.grid_columnconfigure(colNr, minsize=colWidth)
             bgColor = bgColors[2] if isHeadline else bgColors[colNr%2]
-            self.cells.append(Label(self.frame, text=colEntry, bg=bgColor, bd = 1, anchor=W, font=labelFont))
+            self.cells.append(Label(self.frame, text=colEntry, bg=bgColor, bd = 1, anchor=W, font=labelFont, wraplength=colWidth))
 
             if settings["multiLineEntry"]:
                 self.cells[-1].grid(column=0, row=colNr, sticky=E+W)
