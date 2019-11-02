@@ -47,7 +47,7 @@ def SelectSheet(config, name=""):
         selectGui = gui.Gui(selector, settings,  True)
         selectGui.run()
         name = selectGui.sheet
-    return selectGui.sheet
+    return name
 
 def setDefault(data, key, val):
     data[key] = data.get(key, val)
