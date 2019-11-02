@@ -97,23 +97,6 @@ def LoadConfig(name):
 
     return configJson, settings
 
-    if name == "":
-        name = settings["defaultSheet"]
-    if name == "" or name not in configJson['sheets']:
-        name = SelectSheet(configJson['sheets'])
-
-    with open(configJson["sheets"][name], 'rb') as f:
-        data = json.load(f)
-    data["common"].extend(data.get(osName(), []))
-
-    #Overwrite global settings with specific sheet settings
-    if settings["AllowOverwrite"]:
-        for key in data["settings"] :
-            settings[key] = data["settings"][key]
-
-    if (settings["shortSheet"]):
-        data = parseShortSheet(data)
-    return finder.createFinder(settings["finder"], data)
 
 def LoadSheet(name, config, settings):
     with open(config["sheets"][name], 'rb') as f:
