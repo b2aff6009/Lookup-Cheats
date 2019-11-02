@@ -1,6 +1,6 @@
 {
     "settings" : {
-        "defaultSheet" : "",
+        "defaultSheet" : "vim",
         "shortcut" : "alt+d",
         "bgColors" : ["SkyBlue1", "SkyBlue2", "SkyBlue3"],
         "cleanKey" : "<Escape>",
@@ -19,7 +19,7 @@
         "extension" : ".csh",
         "recrusive" : false,
         "directories" : [
-            "./"
+            "./sheets"
         ]
     },
     "sheets" : {

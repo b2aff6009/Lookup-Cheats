@@ -16,8 +16,7 @@
     "Linux" : [
     ],
     "Mac" : [],
-    "Windows" : [
-    ],
+    "Windows" : [],
     "common": [
         [["if", "else"], "Executes following indented code if statment is true.", "if i == 0:"],
         [["loop",  "for"], "Executes indented code from j to n.", "for i in range(j, n):"],
