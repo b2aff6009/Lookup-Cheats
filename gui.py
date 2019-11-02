@@ -46,6 +46,12 @@ class GuiEntry:
     def __del__(self):
         self.frame.destroy()
 
+    def hide(self):
+        self.frame.pack_forget()
+    
+    def show(self):
+        self.frame.pack(fill=X)
+
 class ListEntry:
     '''List Entrys are used to fill the cheatsheet selection listView'''
     def __init__(self, entry, eId, root):
@@ -62,14 +68,22 @@ class ListEntry:
         self.root.selection_set(first=0)
         self.root.activate(0)
 
+    def hide(self):
+        pass
+    
+    def show(self):
+        pass
+
 class Gui:
     def __init__(self, finder, settings = {}, isSheetSelector = False):
         self.settings = settings
         self.entrys = []
-        self.visbleDict = {}
+        self.loadedFrames = {}
+        self.visibleFrames = {}
         self.mainFrames = []
         self.headlines = []
         self.sheet = ""
+        self.isSheetSelector = isSheetSelector
         self.finder = finder
         self.createMainWindow()
         self.createSearchBar(self.root, self.windowWidth, int(self.windowHeight/10), 0)
@@ -112,11 +126,11 @@ class Gui:
 
 
     def execute(self, event):
-        for i, key in enumerate(self.visbleDict.keys()):
+        for i, key in enumerate(self.loadedFrames.keys()):
             if i == self.mainFrame.curselection()[0]:
                 if self.settings["Debug"]:
-                    print(self.visbleDict[key].entry)
-                self.sheet = self.visbleDict[key].entry[0]
+                    print(self.loadedFrames[key].entry)
+                self.sheet = self.loadedFrames[key].entry[0]
                 self.root.destroy()
 
     def changeSelection(self, event):
@@ -168,7 +182,7 @@ class Gui:
             self.root.overrideredirect(True)
         elif platform.system() == "Linux":
             self.root.geometry("{}x{}".format(self.windowWidth, self.windowHeight))
-            self.root.wm_attributes('-type', 'splash')
+            #self.root.wm_attributes('-type', 'splash')
             self.root.wait_visibility(self.root)
         else:
             self.root.wait_visibility(self.root)
@@ -198,30 +212,30 @@ class Gui:
         self.worker = threading.Thread(target=self.updateGui)
         self.worker.start()
 
+    def createEntry(self, key, hits):
+        if (self.isSheetSelector):
+            self.loadedFrames[key] = ListEntry(hits[key], key, self.mainFrame)
+        else:
+            frame = self.mainFrames[len(self.loadedFrames.keys())%self.settings["columns"]]
+            self.loadedFrames[key] = GuiEntry(hits[key], False, frame, self.settings, self.frameWidth)
+
     def updateGui(self):
         hits = self.finder.find(self.searchBar.get())
 
-        toDel = set()
-        if self.settings["columns"] > 1 and self.mainFrame.widgetName == "frame":
-            for key in self.visbleDict.keys():
-                toDel.add(key)
-       
-        for eId in self.visbleDict.keys():
-            if eId not in hits.keys():
-                toDel.add(eId)
+        keys = list(filter(lambda x: x not in hits.keys(), self.visibleFrames.keys()))
+        for key in keys:
+            self.visibleFrames[key].hide()
+            del self.visibleFrames[key]
+            if self.isSheetSelector:
+                del self.loadedFrames[key] 
 
-        for key in toDel:
-            del self.visbleDict[key]
-
-        for eId in hits.keys():
-            if len(self.visbleDict) >= self.settings["maxEntrys"]:
+        for key in filter(lambda x: x not in self.visibleFrames.keys(), hits.keys()):
+            if len(self.visibleFrames) >= self.settings["maxEntrys"]:
                 break;
-            if eId not in self.visbleDict.keys():
-                if (self.mainFrame.widgetName == "frame"):
-                    frame = self.mainFrames[len(self.visbleDict.keys())%self.settings["columns"]]
-                    self.visbleDict[eId] = GuiEntry(hits[eId], False, frame, self.settings, self.frameWidth)
-                else:
-                    self.visbleDict[eId] = ListEntry(hits[eId], eId, self.mainFrame)
+            if key not in self.loadedFrames.keys():
+                self.createEntry(key, hits)
+            self.visibleFrames[key] = self.loadedFrames[key]
+            self.visibleFrames[key].show()
 
     def run(self):
         self.update()
