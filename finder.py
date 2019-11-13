@@ -57,8 +57,14 @@ class FuzzyFinder(Finder):
 class StandardFinder(Finder):
     def getMatches(self, text):
         results = []
+        keys = text.split(' ')
         for entry in self.entrys:
-            if text in entry["tosearch"]:
+            found = True
+            for key in keys:
+                if key not in entry["tosearch"]:
+                    found = False
+                    break;
+            if found == True:
                 results.append(entry)
         return results
 
