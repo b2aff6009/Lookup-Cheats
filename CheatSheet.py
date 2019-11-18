@@ -1,23 +1,26 @@
 
-import json 
-import os #needed for user id check
+import json
+import os  # needed for user id check
 import psutil
 import platform
 
 import finder
 import crawler
 import gui
- 
+
 SettingsPath = "configuration.json"
 settings = {}
 
+
 def osName():
-    Names = {"Windows" : "Windows", "Linux" : "Linux", "Darwin" : "Mac"}
+    Names = {"Windows": "Windows", "Linux": "Linux", "Darwin": "Mac"}
     return Names[platform.system()]
+
 
 def getProcessName():
     p = psutil.Process(os.getpid())
     return p.name()
+
 
 def parseShortSheet(cheatSheet):
     keyList = cheatSheet["entry"]
@@ -27,16 +30,18 @@ def parseShortSheet(cheatSheet):
     data["common"] = []
     for value in valueList:
         entry = {}
-        for i,key in enumerate(keyList,0):
+        for i, key in enumerate(keyList, 0):
             entry[key] = value[i]
         data["common"].append(entry)
     return data
+
 
 def GetSheets(config):
     if (config["crawler"]["use"] == True):
         sheetCrawler = crawler.Crawler(config["crawler"])
         config["sheets"] = sheetCrawler.getSheets()
     return config["sheets"]
+
 
 def SelectSheet(config, name=""):
     sheets = GetSheets(config)
@@ -49,13 +54,15 @@ def SelectSheet(config, name=""):
         name = selectGui.sheet
     return name
 
+
 def setDefault(data, key, val):
     data[key] = data.get(key, val)
+
 
 def SetDefaultSettings(config):
     '''Ensure that every config parameter exists, if it doens't it will be set to a default value'''
 
-    #Settings used by crawler
+    # Settings used by crawler
     setDefault(config, "crawler", {})
     setDefault(config["crawler"], "use", True)
     setDefault(config["crawler"], "recrusive", True)
@@ -70,21 +77,23 @@ def SetDefaultSettings(config):
     setDefault(config["settings"], "shortSheet", False)
     setDefault(config["settings"], "finder", "normal")
 
-    #Settings used by Gui
-    setDefault(config["settings"], "bgColors", ["SkyBlue1", "SkyBlue2", "SkyBlue3"])
-    setDefault(config["settings"], "HeadlineFont", 'Helvetica 15 bold') 
+    # Settings used by Gui
+    setDefault(config["settings"], "bgColors", [
+               "SkyBlue1", "SkyBlue2", "SkyBlue3"])
+    setDefault(config["settings"], "HeadlineFont", 'Helvetica 15 bold')
     setDefault(config["settings"], "Font", 'Helvetica 11')
     setDefault(config["settings"], "multiLineEntry", False)
-    setDefault(config["settings"], "columns",1)
-    setDefault(config["settings"], "selectKey",'<Return>')
+    setDefault(config["settings"], "columns", 1)
+    setDefault(config["settings"], "selectKey", '<Return>')
     setDefault(config["settings"], "position", [0.25, 0.25])
     setDefault(config["settings"], "opacity", 1)
     setDefault(config["settings"], "maxEntrys", 30)
-    setDefault(config["settings"], "selectionUp",'<Up>')
-    setDefault(config["settings"], "selectionDown",'<Down>')
-    setDefault(config["settings"], "backKey",'<Ctrl-Escape>')
-    setDefault(config["settings"], "cleanKey",'<Escape>')
+    setDefault(config["settings"], "selectionUp", '<Up>')
+    setDefault(config["settings"], "selectionDown", '<Down>')
+    setDefault(config["settings"], "backKey", '<Ctrl-Escape>')
+    setDefault(config["settings"], "cleanKey", '<Escape>')
     setDefault(config["settings"], "Debug", False)
+
 
 def LoadConfig(name):
     global settings
@@ -103,17 +112,18 @@ def LoadSheet(name, config, settings):
         data = json.load(f)
     data["common"].extend(data.get(osName(), []))
 
-    #Overwrite global settings with specific sheet settings
+    # Overwrite global settings with specific sheet settings
     if settings["AllowOverwrite"]:
-        for key in data["settings"] :
+        for key in data["settings"]:
             settings[key] = data["settings"][key]
 
     if (settings["shortSheet"]):
         data = parseShortSheet(data)
     return data
 
+
 if __name__ == "__main__":
-    config, settings= LoadConfig("")
+    config, settings = LoadConfig("")
     sheetName = SelectSheet(config)
     sheet = LoadSheet(sheetName, config, settings)
     mFinder = finder.createFinder(settings["finder"], sheet)
