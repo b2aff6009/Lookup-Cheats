@@ -131,6 +131,16 @@ class Gui:
                 print(
                     "Shortcut assignment need root priviliges on Unix! No toggle Key assigned.")
 
+    def getScreen(self):
+        from AppKit import NSScreen
+        if platform.system() == "Darwin2":
+            width = NSScreen.mainScreen().frame().size.width
+            height = NSScreen.mainScreen().frame().size.height
+        else:
+            width = self.root.winfo_screenwidth()
+            height =self.root.winfo_screenheight()
+        return width, height
+
     def execute(self, event):
         for i, key in enumerate(self.loadedFrames.keys()):
             if i == self.mainFrame.curselection()[0]:
@@ -172,10 +182,11 @@ class Gui:
         # Gets the requested values of the height and widht.
         # Set window positon, width and heigth
         position = self.settings["position"]
-        self.windowWidth = int(self.root.winfo_screenwidth()*(1-2*position[0]))
-        self.windowHeight = int(self.root.winfo_screenheight()*(1-position[1]))
-        self.positionX = int(position[0]*self.root.winfo_screenwidth())
-        self.positionY = int(position[1]*self.root.winfo_screenheight())
+        screenwidth, screenheight = self.getScreen()
+        self.windowWidth = int(screenwidth*(1-2*position[0]))
+        self.windowHeight = int(screenheight*(1-position[1]))
+        self.positionX = int(position[0]*screenwidth)
+        self.positionY = int(position[1]*screenheight)
 
         if (self.settings["Debug"] == True):
             print("W: {} H: {}".format(self.root.winfo_screenwidth(),
