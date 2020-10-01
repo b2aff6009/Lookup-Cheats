@@ -5,7 +5,7 @@ import psutil
 import platform
 
 import finder
-import crawler
+import crawler.crawler
 import gui
 
 SettingsPath = "configuration.json"
@@ -38,8 +38,12 @@ def parseShortSheet(cheatSheet):
 
 def GetSheets(config):
     if (config["crawler"]["use"] == True):
-        sheetCrawler = crawler.Crawler(config["crawler"])
-        config["sheets"] = sheetCrawler.getSheets()
+        sheetCrawler = crawler.crawler.createCrawler(config["crawler"])
+        sheetList = list(sheetCrawler.generator())
+        sheets = {}
+        for sheet in sheetList:
+            sheets[os.path.basename(sheet)] = sheet
+        config["sheets"] = sheets
     return config["sheets"]
 
 

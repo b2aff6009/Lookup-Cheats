@@ -1,6 +1,5 @@
 {
     "settings" : {
-        "defaultSheet" : "vscode",
         "shortcut" : "alt+d",
         "bgColors" : ["SkyBlue1", "SkyBlue2", "SkyBlue3"],
         "cleanKey" : "<Escape>",
@@ -15,12 +14,12 @@
         "columns" : 2
     },
     "crawler" : {
-        "use" : true,
+        "type" : "local",
+        "onlyOnce" : false,
+        "memo" : "none",
         "extension" : ".csh",
-        "recrusive" : false,
-        "directories" : [
-            "./sheets"
-        ]
+        "path" : "./sheets",
+        "recrusive" : false
     },
     "sheets" : {
         "vim" : "vim.csh",
