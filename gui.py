@@ -132,8 +132,8 @@ class Gui:
                     "Shortcut assignment need root priviliges on Unix! No toggle Key assigned.")
 
     def getScreen(self):
-        from AppKit import NSScreen
         if platform.system() == "Darwin2":
+            from AppKit import NSScreen
             width = NSScreen.mainScreen().frame().size.width
             height = NSScreen.mainScreen().frame().size.height
         else:
